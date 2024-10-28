@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
@@ -11,10 +12,16 @@ namespace EdfBrowser.App
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+#if NETFRAMEWORK
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Debug.WriteLine("NET Framework");
+#elif NET
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            Debug.WriteLine("NET");
+#endif
+
+            Application.Run(new App());
         }
     }
 }
