@@ -57,7 +57,29 @@ namespace EdfBrowser.App.View
             if (clickedItem == null) return;
 
             var strategy = StrategyFactory.GetStrategy(clickedItem.Text);
+            if (strategy != null)
+            {
+                if (strategy is OpenStrategy openStrategy)
+                {
+                    openStrategy.FileSelected += OnFileSelected;
+                }
+            }
+
             strategy?.Execute(); // 如果命令存在则执行
+        }
+
+        private void OnFileSelected(object sender, string path)
+        {
+            EdfDashBoardView edfDashBoardView = new EdfDashBoardView();
+            Form form = new Form();
+            form.MinimumSize = new System.Drawing.Size(600, 600);
+            form.Text = "Add Signal";
+
+            form.Controls.Add(edfDashBoardView);
+
+            edfDashBoardView.Dock = DockStyle.Fill;
+            edfDashBoardView.Show();
+            form.ShowDialog();
         }
     }
 
@@ -68,9 +90,18 @@ namespace EdfBrowser.App.View
 
     public class OpenStrategy : IStrategy
     {
+        public event EventHandler<string> FileSelected;
+
         public void Execute()
         {
-            MessageBox.Show("Open Command");
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "EDF files (*.edf)|*.edf";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    FileSelected?.Invoke(this, openFileDialog.FileName);
+                }
+            }
         }
     }
 
@@ -78,7 +109,7 @@ namespace EdfBrowser.App.View
     {
         public void Execute()
         {
-            MessageBox.Show("Close Command");
+
         }
     }
 
