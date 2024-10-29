@@ -1,5 +1,5 @@
 
-using EdfBrowser.App.Services;
+using EdfBrowser.Services;
 using EdfBrowser.App.Store;
 using EdfBrowser.App.View;
 using EdfBrowser.App.ViewModels;

@@ -1,9 +1,9 @@
-using EdfBrowser.App.Models;
+using EdfBrowser.Models;
 using System.Collections.Generic;
 
-namespace EdfBrowser.App.Services
+namespace EdfBrowser.Services
 {
-    public class MenuService
+    public class MenuService : IMenuService
     {
         /// <summary>
         /// 

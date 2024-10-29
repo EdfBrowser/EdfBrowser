@@ -14,4 +14,9 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EdfBrowser.Models\EdfBrowser.Models.csproj" />
+    <ProjectReference Include="..\EdfBrowser.Services\EdfBrowser.Services.csproj" />
+  </ItemGroup>
+
 </Project>

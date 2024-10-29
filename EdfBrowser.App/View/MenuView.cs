@@ -2,7 +2,6 @@ using EdfBrowser.App.ViewModels;
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Input;
 
 namespace EdfBrowser.App.View
 {

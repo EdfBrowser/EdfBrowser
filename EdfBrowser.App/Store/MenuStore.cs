@@ -1,5 +1,5 @@
-using EdfBrowser.App.Models;
-using EdfBrowser.App.Services;
+using EdfBrowser.Models;
+using EdfBrowser.Services;
 using System;
 using System.Collections.Generic;
 

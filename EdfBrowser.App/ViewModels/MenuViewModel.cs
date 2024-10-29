@@ -1,6 +1,6 @@
 using EdfBrowser.App.Commands;
-using EdfBrowser.App.Models;
-using EdfBrowser.App.Services;
+using EdfBrowser.Models;
+using EdfBrowser.Services;
 using EdfBrowser.App.Store;
 using EdfBrowser.App.View;
 using System;
