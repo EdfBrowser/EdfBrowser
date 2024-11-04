@@ -5,16 +5,18 @@ VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdfBrowser.App", "EdfBrowser.App\EdfBrowser.App.csproj", "{F8292EE9-B25B-408B-AF95-935EEA02A6E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdfBrowser.Test", "EdfBrowser.Test\EdfBrowser.Test.csproj", "{DF149A99-5C7E-4BCD-A17B-F04AAD7F3D6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdfBrowser.Test", "EdfBrowser.Test\EdfBrowser.Test.csproj", "{DF149A99-5C7E-4BCD-A17B-F04AAD7F3D6B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9BEFFF74-D5BC-4DB3-9B60-53D7833C1867}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdfBrowser.Services", "EdfBrowser.Services\EdfBrowser.Services.csproj", "{A8EEAA9D-8713-4345-B9D1-0A643DAC0BE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdfBrowser.Services", "EdfBrowser.Services\EdfBrowser.Services.csproj", "{A8EEAA9D-8713-4345-B9D1-0A643DAC0BE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdfBrowser.Models", "EdfBrowser.Models\EdfBrowser.Models.csproj", "{4B34D00C-6F0C-4D0F-A8A0-4D2BD670DA8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdfBrowser.Models", "EdfBrowser.Models\EdfBrowser.Models.csproj", "{4B34D00C-6F0C-4D0F-A8A0-4D2BD670DA8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdfBrowser.EDF", "EdfBrowser.EDF\EdfBrowser.EDF.csproj", "{83C4675C-54BA-4F3A-BF74-9A929D490985}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{4B34D00C-6F0C-4D0F-A8A0-4D2BD670DA8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B34D00C-6F0C-4D0F-A8A0-4D2BD670DA8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B34D00C-6F0C-4D0F-A8A0-4D2BD670DA8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83C4675C-54BA-4F3A-BF74-9A929D490985}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83C4675C-54BA-4F3A-BF74-9A929D490985}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83C4675C-54BA-4F3A-BF74-9A929D490985}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83C4675C-54BA-4F3A-BF74-9A929D490985}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

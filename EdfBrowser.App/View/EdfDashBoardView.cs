@@ -17,29 +17,20 @@ namespace EdfBrowser.App.View
             mainPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             mainPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
-            Panel pathPanel = CreatePathPanel();
+            ListBox pathPanel = CreatePathPanel();
             mainPanel.Controls.Add(pathPanel, 0, 0);
 
-            TableLayoutPanel infoPanel = new TableLayoutPanel();
-            infoPanel.ColumnCount = 2;
-            infoPanel.RowCount = 3; // 根据实际信息项数量
-            infoPanel.Dock = DockStyle.Fill;
-            infoPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // 第一列宽度
-            infoPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); // 第二列占满
-
-            infoPanel.Controls.Add(new Label { Text = "Subject:" }, 0, 0);
-            infoPanel.Controls.Add(new Label { Text = "X M 30-OCT-2021", AutoSize = true }, 1, 0);
-
-            infoPanel.Controls.Add(new Label { Text = "Recording:" }, 0, 1);
-            infoPanel.Controls.Add(new Label { Text = "Startdate 31-OCT-2021...", AutoSize = true }, 1, 1);
-
-            infoPanel.Controls.Add(new Label { Text = "Start / End / Duration:" }, 0, 2);
-            infoPanel.Controls.Add(new Label { Text = "7:39:01 / 8:53:39 / 1:14:38", AutoSize = true }, 1, 2);
-
-            // 添加 infoPanel 到主 TableLayoutPanel 的第二行
+            TableLayoutPanel infoPanel = CreateInfoPanel();
             mainPanel.Controls.Add(infoPanel, 0, 1);
 
+            TableLayoutPanel operatePanel = CreateOperatePanel();
+            mainPanel.Controls.Add(operatePanel, 0, 2);
 
+            Controls.Add(mainPanel);
+        }
+
+        private TableLayoutPanel CreateOperatePanel()
+        {
             TableLayoutPanel operatePanel = new TableLayoutPanel();
             operatePanel.Dock = DockStyle.Fill;
             operatePanel.ColumnCount = 3;
@@ -73,21 +64,38 @@ namespace EdfBrowser.App.View
             ListBox rightListBox = new ListBox();
             rightListBox.Dock = DockStyle.Fill;
             operatePanel.Controls.Add(rightListBox, 2, 0);
-
-            mainPanel.Controls.Add(operatePanel, 0, 2);
-
-            Controls.Add(mainPanel);
+            return operatePanel;
         }
 
-        private Panel CreatePathPanel()
+        private TableLayoutPanel CreateInfoPanel()
+        {
+            TableLayoutPanel tableLayoutPanel = new TableLayoutPanel();
+            tableLayoutPanel.ColumnCount = 2;
+            tableLayoutPanel.RowCount = 3; // 根据实际信息项数量
+            tableLayoutPanel.Dock = DockStyle.Fill;
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // 第一列宽度
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); // 第二列占满
+
+            tableLayoutPanel.Controls.Add(new Label { Text = "Subject:" }, 0, 0);
+            tableLayoutPanel.Controls.Add(new Label { Text = "X M 30-OCT-2021", AutoSize = true }, 1, 0);
+
+            tableLayoutPanel.Controls.Add(new Label { Text = "Recording:" }, 0, 1);
+            tableLayoutPanel.Controls.Add(new Label { Text = "Startdate 31-OCT-2021...", AutoSize = true }, 1, 1);
+
+            tableLayoutPanel.Controls.Add(new Label { Text = "Start / End / Duration:" }, 0, 2);
+            tableLayoutPanel.Controls.Add(new Label { Text = "7:39:01 / 8:53:39 / 1:14:38", AutoSize = true }, 1, 2);
+            return tableLayoutPanel;
+        }
+
+        private ListBox CreatePathPanel()
         {
             // Top Panel to display edf file path.
-            Panel pathPanel = new Panel();
-            pathPanel.Dock = DockStyle.Fill;
-            pathPanel.BackColor = System.Drawing.Color.White;
-            pathPanel.BorderStyle = BorderStyle.FixedSingle;
+            ListBox listbox = new ListBox();
+            listbox.Dock = DockStyle.Fill;
+            listbox.BackColor = Color.White;
+            listbox.BorderStyle = BorderStyle.FixedSingle;
 
-            return pathPanel;
+            return listbox;
         }
     }
 }
