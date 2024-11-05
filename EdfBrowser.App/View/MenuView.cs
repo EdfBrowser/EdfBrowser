@@ -75,28 +75,37 @@ namespace EdfBrowser.App.View
         {
             using (Edf edf = new Edf(path))
             {
+                edf.Open();
+
                 EdfInfo edfInfo = new EdfInfo();
                 edfInfo.FilePath = path;
                 EdfLibHdr hdr = edf.EdfLibHdr;
-                edfInfo.SubjectName = hdr.patient;
+                edfInfo.Subject = hdr.patient;
                 edfInfo.Recording = hdr.recording;
-                string startDate = hdr.startdate_day + " " + hdr.startdate_month + " " + hdr.startdate_year;
-                string startTime = hdr.starttime_hour + ":" + hdr.starttime_minute + ":" + hdr.starttime_second;
-                edfInfo.StartDateTime = string.Format("{0}     {1}", startDate, startTime);
 
-                long unit = (int)(hdr.datarecord_duration / EdfLibConstants.EDFLIB_TIME_DIMENSION);
+                DateTime startDateTime = new DateTime(hdr.startdate_year, hdr.startdate_month, hdr.startdate_day, hdr.starttime_hour, hdr.starttime_minute, hdr.starttime_second);
+                edfInfo.StartDateTime = startDateTime.ToString("yyyy-MMM-dd HH:mm:ss");
+
+                long unit = hdr.datarecord_duration / EdfLibConstants.EDFLIB_TIME_DIMENSION;
                 long numSamples = hdr.datarecords_in_file;
-                int second = (int)(unit / EdfLibConstants.EDFLIB_TIME_DIMENSION);
-
+                int second = (int)(numSamples / unit);
                 TimeSpan ts = new TimeSpan(0, 0, second);
-                
 
-                //string endDate = hdr.startdate_day + " " + hdr.startdate_month + " " + hdr.startdate_year;
-                //string endTime = hdr.starttime_hour + ":" + hdr.starttime_minute + ":" + hdr.starttime_second;
-                //edfInfo.EndDateTime = string.Format("{0}     {1}", endDate, endTime);
+                DateTime endDateTime = startDateTime + ts;
+                edfInfo.EndDateTime = endDateTime.ToString("yyyy-MMM-dd HH:mm:ss");
+
+                edfInfo.Duration = ts.ToString();
 
 
-                EdfDashBoardView edfDashBoardView = new EdfDashBoardView();
+                Dictionary<string, int> signalInfo = new Dictionary<string, int>();
+                for (int i = 0; i < hdr.edfsignals; i++)
+                {
+                    signalInfo[hdr.signalparam[i].label] = hdr.signalparam[i].smp_in_datarecord;
+                }
+
+                edfInfo.SignalInfo = signalInfo;
+
+                EdfDashBoardView edfDashBoardView = new EdfDashBoardView(edfInfo);
                 Form form = new Form();
                 form.MinimumSize = new System.Drawing.Size(600, 600);
                 form.Text = "Add Signal";
@@ -112,21 +121,21 @@ namespace EdfBrowser.App.View
         public class EdfInfo
         {
             private string m_filePath;
-            private string m_subjectName;
+            private string m_subject;
             private string m_recording;
             private string m_startDateTime;
             private string m_endDateTime;
             private string m_duration;
 
-            private Dictionary<string, string> m_signalInfo;
+            private Dictionary<string, int> m_signalInfo;
 
             public string FilePath { get => m_filePath; set => m_filePath = value; }
-            public string SubjectName { get => m_subjectName; set => m_subjectName = value; }
+            public string Subject { get => m_subject; set => m_subject = value; }
             public string Recording { get => m_recording; set => m_recording = value; }
             public string StartDateTime { get => m_startDateTime; set => m_startDateTime = value; }
             public string EndDateTime { get => m_endDateTime; set => m_endDateTime = value; }
             public string Duration { get => m_duration; set => m_duration = value; }
-            public Dictionary<string, string> SignalInfo { get => m_signalInfo; set => m_signalInfo = value; }
+            public Dictionary<string, int> SignalInfo { get => m_signalInfo; set => m_signalInfo = value; }
         }
 
         public interface IStrategy
@@ -176,3 +185,4 @@ namespace EdfBrowser.App.View
             }
         }
     }
+}

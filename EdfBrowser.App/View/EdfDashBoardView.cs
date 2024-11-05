@@ -1,101 +1,158 @@
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App.View
 {
     public partial class EdfDashBoardView : UserControl
     {
-        public EdfDashBoardView()
+        private MenuView.EdfInfo m_edfInfo;
+
+        public EdfDashBoardView(MenuView.EdfInfo edfInfo)
         {
             InitializeComponent();
 
-            TableLayoutPanel mainPanel = new TableLayoutPanel();
-            mainPanel.Dock = DockStyle.Fill;
-            mainPanel.RowCount = 3;
-            mainPanel.ColumnCount = 1;
-            mainPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
-            mainPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            mainPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            m_edfInfo = edfInfo;
 
-            ListBox pathPanel = CreatePathPanel();
-            mainPanel.Controls.Add(pathPanel, 0, 0);
-
-            TableLayoutPanel infoPanel = CreateInfoPanel();
-            mainPanel.Controls.Add(infoPanel, 0, 1);
-
-            TableLayoutPanel operatePanel = CreateOperatePanel();
-            mainPanel.Controls.Add(operatePanel, 0, 2);
-
-            Controls.Add(mainPanel);
+            Load += EdfDashBoardView_Load;
         }
 
-        private TableLayoutPanel CreateOperatePanel()
+        private void EdfDashBoardView_Load(object sender, System.EventArgs e)
         {
-            TableLayoutPanel operatePanel = new TableLayoutPanel();
-            operatePanel.Dock = DockStyle.Fill;
-            operatePanel.ColumnCount = 3;
-            operatePanel.RowCount = 1;
-
-            // 设置列宽
-            operatePanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40));  // 左侧列表
-            operatePanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100)); // 中间按钮列，固定宽度
-            operatePanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40));  // 右侧列表
-
-            // 左侧列表 (ListBox 或 ListView)
-            ListBox leftListBox = new ListBox();
-            leftListBox.Dock = DockStyle.Fill;
-            operatePanel.Controls.Add(leftListBox, 0, 0);
-
-            // 中间按钮
-            FlowLayoutPanel buttonPanel = new FlowLayoutPanel();
-            buttonPanel.Dock = DockStyle.Fill;
-            buttonPanel.FlowDirection = FlowDirection.TopDown;
-
-            // 添加按钮
-            Button addButton = new Button { Text = "Add->", Width = 80 };
-            Button subtractButton = new Button { Text = "Subtract->", Width = 80 };
-            Button removeButton = new Button { Text = "Remove<-", Width = 80 };
-            buttonPanel.Controls.Add(addButton);
-            buttonPanel.Controls.Add(subtractButton);
-            buttonPanel.Controls.Add(removeButton);
-            operatePanel.Controls.Add(buttonPanel, 1, 0);
-
-            // 右侧列表 (ListBox 或 ListView)
-            ListBox rightListBox = new ListBox();
-            rightListBox.Dock = DockStyle.Fill;
-            operatePanel.Controls.Add(rightListBox, 2, 0);
-            return operatePanel;
+            AddControls();
         }
 
-        private TableLayoutPanel CreateInfoPanel()
+        private void AddControls()
         {
-            TableLayoutPanel tableLayoutPanel = new TableLayoutPanel();
-            tableLayoutPanel.ColumnCount = 2;
-            tableLayoutPanel.RowCount = 3; // 根据实际信息项数量
-            tableLayoutPanel.Dock = DockStyle.Fill;
-            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // 第一列宽度
-            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); // 第二列占满
-
-            tableLayoutPanel.Controls.Add(new Label { Text = "Subject:" }, 0, 0);
-            tableLayoutPanel.Controls.Add(new Label { Text = "X M 30-OCT-2021", AutoSize = true }, 1, 0);
-
-            tableLayoutPanel.Controls.Add(new Label { Text = "Recording:" }, 0, 1);
-            tableLayoutPanel.Controls.Add(new Label { Text = "Startdate 31-OCT-2021...", AutoSize = true }, 1, 1);
-
-            tableLayoutPanel.Controls.Add(new Label { Text = "Start / End / Duration:" }, 0, 2);
-            tableLayoutPanel.Controls.Add(new Label { Text = "7:39:01 / 8:53:39 / 1:14:38", AutoSize = true }, 1, 2);
-            return tableLayoutPanel;
+            Controls.Add(CreateButtonPanel());
+            Controls.Add(CreateSignalInfoPanel());
+            Controls.Add(CreateInfoPanel());
+            Controls.Add(CreateLabelPanel(m_edfInfo.FilePath));
         }
 
-        private ListBox CreatePathPanel()
+        private Panel CreateLabelPanel(string text)
         {
-            // Top Panel to display edf file path.
-            ListBox listbox = new ListBox();
-            listbox.Dock = DockStyle.Fill;
-            listbox.BackColor = Color.White;
-            listbox.BorderStyle = BorderStyle.FixedSingle;
+            var label = CreateLabel(text);
+            label.Dock = DockStyle.Fill;
+            label.BackColor = Color.White;
+            label.BorderStyle = BorderStyle.FixedSingle;
 
-            return listbox;
+            var panel = new Panel();
+            panel.Dock = DockStyle.Top;
+            panel.Controls.Add(label);
+            return panel;
+        }
+
+        private Panel CreateSignalInfoPanel()
+        {
+            Panel container = new Panel();
+            container.Dock = DockStyle.Fill;
+
+            GroupBox groupBox = new GroupBox();
+            groupBox.Text = "Signals";
+            groupBox.Dock = DockStyle.Fill;
+
+            ListBox signalListBox = CreateSignalListBox();
+            groupBox.Controls.Add(signalListBox);
+
+            container.Controls.Add(groupBox);
+            return container;
+        }
+        private ListBox CreateSignalListBox()
+        {
+            ListBox signalListBox = new ListBox();
+            signalListBox.Dock = DockStyle.Fill;
+
+            signalListBox.SelectionMode = SelectionMode.MultiExtended;
+
+            signalListBox.BeginUpdate();
+
+            int i = 1;
+            StringBuilder sbuilder = new StringBuilder();
+
+            foreach (var item in m_edfInfo.SignalInfo)
+            {
+                signalListBox.Items.Add(FormatSignalInfo(i++, item));
+            }
+
+            signalListBox.EndUpdate();
+
+
+            return signalListBox;
+        }
+
+        private string FormatSignalInfo(int index, KeyValuePair<string, int> item)
+        {
+            return string.Format("{0,-4}{1,-20}{2,5}HZ", index, item.Key, item.Value);
+        }
+
+        private FlowLayoutPanel CreateButtonPanel()
+        {
+            FlowLayoutPanel container = new FlowLayoutPanel();
+            container.Dock = DockStyle.Bottom;
+            container.FlowDirection = FlowDirection.LeftToRight;
+
+            Button selectedButton = new Button();
+            selectedButton.Text = "Selected";
+
+            container.Controls.Add(selectedButton);
+
+            return container;
+        }
+
+
+        private Label CreateLabel(string text, bool autosize = false)
+        {
+            Label label = new Label();
+            label.Text = text;
+            label.AutoSize = autosize;
+            if (autosize)
+            {
+                label.Size = CreateGraphics().MeasureString(text, Font).ToSize();
+            }
+
+            return label;
+        }
+
+        private Panel CreateInfoPanel()
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>()
+            {
+                {"Subject: ", m_edfInfo.Subject },
+                {"Recording: ", m_edfInfo.Recording },
+                {"Start Time: ", m_edfInfo.StartDateTime },
+                {"End Time: " , m_edfInfo.EndDateTime},
+                {"Duration: ", m_edfInfo.Duration },
+            };
+
+            Panel panel = new Panel();
+            panel.Dock = DockStyle.Top;
+
+            int lastHeight = 0;
+            foreach (var entry in dict)
+            {
+                AddLabelPairToPanel(panel, entry.Key, entry.Value, ref lastHeight);
+            };
+
+            panel.Height = lastHeight;
+
+            return panel;
+        }
+
+        private void AddLabelPairToPanel(Panel panel, string key, string value, ref int lastHeight)
+        {
+            var keyLabel = CreateLabel(key);
+            keyLabel.Location = new Point(0, lastHeight);
+
+            var valueLabel = CreateLabel(value, true);
+            valueLabel.Location = new Point(keyLabel.Width, lastHeight);
+
+            panel.Controls.Add(keyLabel);
+            panel.Controls.Add(valueLabel);
+
+            lastHeight += keyLabel.Height;
         }
     }
 }
