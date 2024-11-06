@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -264,7 +263,7 @@ namespace Browser.EDF
 
     public class Edf : IDisposable
     {
-        private string m_file;
+        private readonly string m_file;
         private EdfLibHdr m_edfLibHdr;
 
         public Edf(string file)
@@ -297,6 +296,8 @@ namespace Browser.EDF
                 }
                 else
                 {
+                    opened = true;
+
                     // Convert the pointer to the structure
                     m_edfLibHdr = Marshal.PtrToStructure<EdfLibHdr>(edfhdr);
                 }

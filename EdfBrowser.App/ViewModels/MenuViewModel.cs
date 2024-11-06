@@ -1,46 +1,36 @@
 using EdfBrowser.App.Commands;
-using EdfBrowser.Models;
-using EdfBrowser.Services;
 using EdfBrowser.App.Store;
-using EdfBrowser.App.View;
-using System;
+using EdfBrowser.Models;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace EdfBrowser.App.ViewModels
 {
     public class MenuViewModel
     {
-        private List<MenuStructure> m_menus;
+        private readonly EdfDashBoardViewModel m_edfDashBoardViewModel;
 
         private readonly MenuStore m_menuStore;
 
-        public MenuViewModel(MenuStore menuStore)
+        private MenuViewModel(MenuStore menuStore, EdfDashBoardViewModel edfDashBoardViewModel)
         {
             m_menuStore = menuStore;
-            m_menuStore.MenuChangedEventHandler += OnMenuChanged;
+            m_edfDashBoardViewModel = edfDashBoardViewModel;
+
             LoadMenuCommand = new RelayCommand(LoadMenu);
         }
 
-        public ICommand LoadMenuCommand { get; }
-        public IEnumerable<MenuStructure> Menus
+        public static MenuViewModel LoadMenus(MenuStore menuStore, EdfDashBoardViewModel edfDashBoardViewModel)
         {
-            get
-            {
-                return m_menus;
-            }
-            set
-            {
-                m_menus = m_menuStore.Menus;
-                // 通知ui更新
-            }
+            MenuViewModel menuViewModel = new MenuViewModel(menuStore, edfDashBoardViewModel);
+            menuViewModel.LoadMenuCommand.Execute(null);
+            return menuViewModel;
         }
 
-        private void OnMenuChanged(object sender, List<MenuStructure> e)
-        {
-            Menus = e;
-        }
+        public ICommand LoadMenuCommand { get; }
+        public IEnumerable<MenuStructure> Menus => m_menuStore.Menus;
+
+        public EdfDashBoardViewModel EdfDashBoardViewModel => m_edfDashBoardViewModel;
 
         #region commands
         private void LoadMenu(object parameter)

@@ -1,5 +1,6 @@
+using EdfBrowser.App.ViewModels;
+using EdfBrowser.Models;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -8,13 +9,14 @@ namespace EdfBrowser.App.View
 {
     public partial class EdfDashBoardView : UserControl
     {
-        private MenuView.EdfInfo m_edfInfo;
+        private readonly EdfDashBoardViewModel m_edfDashBoardViewModel;
+        private EdfInfo m_edfInfo => m_edfDashBoardViewModel.EdfInfo;
 
-        public EdfDashBoardView(MenuView.EdfInfo edfInfo)
+        public EdfDashBoardView(EdfDashBoardViewModel edfDashBoardViewModel)
         {
             InitializeComponent();
 
-            m_edfInfo = edfInfo;
+            m_edfDashBoardViewModel = edfDashBoardViewModel;
 
             Load += EdfDashBoardView_Load;
         }

@@ -1,14 +1,12 @@
-using NUnit.Framework;
-using Moq;
-using System;
 using Browser.EDF;
+using NUnit.Framework;
 
 namespace EdfBrowser.Test
 {
     [TestFixture]
     public class EdfTests
     {
-        private const string ValidFilePath = @"C:\Users\admin\source\c#\psd_csharp\nunit.test\asserts\X.edf";
+        private const string ValidFilePath = @"D:\code\c#\psd_csharp\nunit.test\asserts\X.edf";
 
         [Test]
         public void Open_ValidFile_ReturnsTrue()

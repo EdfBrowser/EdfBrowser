@@ -1,16 +1,11 @@
-using Browser.EDF;
 using EdfBrowser.App.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App.View
 {
     public partial class MenuView : UserControl
     {
-
         private readonly MenuViewModel m_menuViewModel;
 
         public MenuView(MenuViewModel menuViewModel)
@@ -30,13 +25,10 @@ namespace EdfBrowser.App.View
             MenuStrip menuStrip = new MenuStrip();
             menuStrip.Dock = DockStyle.Fill;
 
-            // Add Menu Items
-            m_menuViewModel.LoadMenuCommand.Execute(null);
-            if (m_menuViewModel.Menus.Count() == 0) return;
-
             foreach (var menu in m_menuViewModel.Menus)
             {
                 ToolStripMenuItem rootMenuItem = new ToolStripMenuItem(menu.Description);
+
                 if (menu.MenuItems != null)
                 {
                     foreach (var item in menu.MenuItems)
@@ -73,69 +65,18 @@ namespace EdfBrowser.App.View
 
         private void OnFileSelected(object sender, string path)
         {
-            using (Edf edf = new Edf(path))
-            {
-                edf.Open();
+            m_menuViewModel.EdfDashBoardViewModel.ParseEdfCommand.Execute(path);
 
-                EdfInfo edfInfo = new EdfInfo();
-                edfInfo.FilePath = path;
-                EdfLibHdr hdr = edf.EdfLibHdr;
-                edfInfo.Subject = hdr.patient;
-                edfInfo.Recording = hdr.recording;
+            EdfDashBoardView edfDashBoardView = new EdfDashBoardView(m_menuViewModel.EdfDashBoardViewModel);
+            Form form = new Form();
+            form.MinimumSize = new System.Drawing.Size(600, 600);
+            form.Text = "Add Signal";
 
-                DateTime startDateTime = new DateTime(hdr.startdate_year, hdr.startdate_month, hdr.startdate_day, hdr.starttime_hour, hdr.starttime_minute, hdr.starttime_second);
-                edfInfo.StartDateTime = startDateTime.ToString("yyyy-MMM-dd HH:mm:ss");
+            form.Controls.Add(edfDashBoardView);
 
-                long unit = hdr.datarecord_duration / EdfLibConstants.EDFLIB_TIME_DIMENSION;
-                long numSamples = hdr.datarecords_in_file;
-                int second = (int)(numSamples / unit);
-                TimeSpan ts = new TimeSpan(0, 0, second);
-
-                DateTime endDateTime = startDateTime + ts;
-                edfInfo.EndDateTime = endDateTime.ToString("yyyy-MMM-dd HH:mm:ss");
-
-                edfInfo.Duration = ts.ToString();
-
-
-                Dictionary<string, int> signalInfo = new Dictionary<string, int>();
-                for (int i = 0; i < hdr.edfsignals; i++)
-                {
-                    signalInfo[hdr.signalparam[i].label] = hdr.signalparam[i].smp_in_datarecord;
-                }
-
-                edfInfo.SignalInfo = signalInfo;
-
-                EdfDashBoardView edfDashBoardView = new EdfDashBoardView(edfInfo);
-                Form form = new Form();
-                form.MinimumSize = new System.Drawing.Size(600, 600);
-                form.Text = "Add Signal";
-
-                form.Controls.Add(edfDashBoardView);
-
-                edfDashBoardView.Dock = DockStyle.Fill;
-                edfDashBoardView.Show();
-                form.ShowDialog();
-            }
-        }
-
-        public class EdfInfo
-        {
-            private string m_filePath;
-            private string m_subject;
-            private string m_recording;
-            private string m_startDateTime;
-            private string m_endDateTime;
-            private string m_duration;
-
-            private Dictionary<string, int> m_signalInfo;
-
-            public string FilePath { get => m_filePath; set => m_filePath = value; }
-            public string Subject { get => m_subject; set => m_subject = value; }
-            public string Recording { get => m_recording; set => m_recording = value; }
-            public string StartDateTime { get => m_startDateTime; set => m_startDateTime = value; }
-            public string EndDateTime { get => m_endDateTime; set => m_endDateTime = value; }
-            public string Duration { get => m_duration; set => m_duration = value; }
-            public Dictionary<string, int> SignalInfo { get => m_signalInfo; set => m_signalInfo = value; }
+            edfDashBoardView.Dock = DockStyle.Fill;
+            edfDashBoardView.Show();
+            form.ShowDialog();
         }
 
         public interface IStrategy

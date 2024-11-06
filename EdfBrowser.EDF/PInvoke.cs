@@ -5,20 +5,20 @@ namespace Browser.EDF
 {
     public class PInvoke
     {
-        private const string m_Edf = "edf_lib.dll";
+        private const string m_edf = "edf_lib.dll";
 
-        [DllImport(m_Edf,
+        [DllImport(m_edf,
             CallingConvention = CallingConvention.Cdecl,
             EntryPoint = "edflib_is_file_used")]
         public static extern int IsUsed(
             [MarshalAs(UnmanagedType.LPStr)] string path);
 
-        [DllImport(m_Edf,
+        [DllImport(m_edf,
             CallingConvention = CallingConvention.Cdecl,
             EntryPoint = "edfclose_file")]
         public static extern int CloseFile(int handle);
 
-        [DllImport(m_Edf,
+        [DllImport(m_edf,
             CallingConvention = CallingConvention.Cdecl,
             EntryPoint = "edfopen_file_readonly")]
         public static extern int OpenFile(
@@ -26,7 +26,7 @@ namespace Browser.EDF
             IntPtr edfhdr,
             int read_annotations);
 
-        [DllImport(m_Edf,
+        [DllImport(m_edf,
             CallingConvention = CallingConvention.Cdecl,
             EntryPoint = "edfread_physical_samples")]
         public static extern int ReadPhysicalSamples(
@@ -35,7 +35,7 @@ namespace Browser.EDF
             int n,
             [Out] double[] buf);
 
-        [DllImport(m_Edf,
+        [DllImport(m_edf,
             CallingConvention = CallingConvention.Cdecl,
             EntryPoint = "edfread_digital_samples")]
         public static extern int ReadDigitalSamples(
@@ -44,14 +44,14 @@ namespace Browser.EDF
             int n,
             [Out] int[] buf);
 
-        [DllImport(m_Edf,
+        [DllImport(m_edf,
             CallingConvention = CallingConvention.Cdecl,
             EntryPoint = "edfread_all_digital_samples")]
         public static extern int ReadDigitalSamplesByOneTime(
             int handle,
             [Out] IntPtr[] buf);
 
-        [DllImport(m_Edf,
+        [DllImport(m_edf,
             CallingConvention = CallingConvention.Cdecl,
             EntryPoint = "edfseek")]
         public static extern long Seek(

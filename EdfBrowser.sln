@@ -16,7 +16,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdfBrowser.Services", "EdfB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdfBrowser.Models", "EdfBrowser.Models\EdfBrowser.Models.csproj", "{4B34D00C-6F0C-4D0F-A8A0-4D2BD670DA8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdfBrowser.EDF", "EdfBrowser.EDF\EdfBrowser.EDF.csproj", "{83C4675C-54BA-4F3A-BF74-9A929D490985}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdfBrowser.EDF", "EdfBrowser.EDF\EdfBrowser.EDF.csproj", "{83C4675C-54BA-4F3A-BF74-9A929D490985}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "third_libs", "third_libs", "{52B08AD8-B0EC-4C45-87BA-33C320EC971A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{184965CF-DEC5-425A-A865-E1D8B8D45E60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +51,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A8EEAA9D-8713-4345-B9D1-0A643DAC0BE3} = {184965CF-DEC5-425A-A865-E1D8B8D45E60}
+		{4B34D00C-6F0C-4D0F-A8A0-4D2BD670DA8A} = {184965CF-DEC5-425A-A865-E1D8B8D45E60}
+		{83C4675C-54BA-4F3A-BF74-9A929D490985} = {52B08AD8-B0EC-4C45-87BA-33C320EC971A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D0E2EB66-8212-498C-BA6C-63635E186223}
