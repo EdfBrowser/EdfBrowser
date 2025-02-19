@@ -52,7 +52,7 @@ namespace EdfBrowser.App
                 IYAxis y = axisManager.AddNumericLeftAxis();
 
                 double samples = 1.0 / edfInfo.SignalInfos[0].Samples;
-                seriesManager.AddSignalSeries(x, y, new List<double>(), samples);
+                seriesManager.AddSignalSeries(x, y, samples);
             }
 
             _figureForm.Refresh();
@@ -67,9 +67,8 @@ namespace EdfBrowser.App
             {
                 EdfSample edfSample = edfSamples.ElementAt(i);
                 var sig = (SignalSeries)seriesManager.Series[edfSample.Signal];
-                var source = (SignalSouceDouble)sig.SignalSource;
+                var source = (SignalSourceDouble)sig.SignalSource;
                 source.AddRange(edfSample.Buf);
-                source.XOffset = sig.X.Min;
                 sig.X.ScrollPosition = source.Length * source.SampleInterval;
             }
 
