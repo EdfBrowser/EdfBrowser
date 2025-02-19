@@ -28,16 +28,18 @@ namespace EdfBrowser.App
         /// </summary>
         private void InitializeComponent()
         {
-            SuspendLayout();
+            this.SuspendLayout();
             // 
             // App
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(952, 648);
-            Name = "App";
-            Text = "Edf Browser";
-            ResumeLayout(false);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(816, 457);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Name = "App";
+            this.Text = "Edf Browser";
+            this.ResumeLayout(false);
+
         }
 
         #endregion

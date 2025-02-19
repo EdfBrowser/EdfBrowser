@@ -1,18 +1,18 @@
-using EdfBrowser.App.ViewModels;
 using System;
 using System.Windows.Forms;
 
-namespace EdfBrowser.App.View
+namespace EdfBrowser.App
 {
-    public partial class MenuView : UserControl
+    internal partial class MenuView : UserControl
     {
-        private readonly MenuViewModel m_menuViewModel;
+        internal event EventHandler<string> FileSelected;
+        private readonly MenuViewModel _menuViewModel;
 
-        public MenuView(MenuViewModel menuViewModel)
+        internal MenuView(MenuViewModel menuViewModel)
         {
             InitializeComponent();
 
-            m_menuViewModel = menuViewModel;
+            _menuViewModel = menuViewModel;
 
             BackColor = System.Drawing.Color.White;
 
@@ -25,7 +25,7 @@ namespace EdfBrowser.App.View
             MenuStrip menuStrip = new MenuStrip();
             menuStrip.Dock = DockStyle.Fill;
 
-            foreach (var menu in m_menuViewModel.Menus)
+            foreach (var menu in _menuViewModel.Menus)
             {
                 ToolStripMenuItem rootMenuItem = new ToolStripMenuItem(menu.Description);
 
@@ -64,29 +64,16 @@ namespace EdfBrowser.App.View
         }
 
         private void OnFileSelected(object sender, string path)
-        {
-            m_menuViewModel.EdfDashBoardViewModel.ParseEdfCommand.Execute(path);
+            => FileSelected?.Invoke(this, path);
 
-            EdfDashBoardView edfDashBoardView = new EdfDashBoardView(m_menuViewModel.EdfDashBoardViewModel);
-            Form form = new Form();
-            form.MinimumSize = new System.Drawing.Size(600, 600);
-            form.Text = "Add Signal";
-
-            form.Controls.Add(edfDashBoardView);
-
-            edfDashBoardView.Dock = DockStyle.Fill;
-            edfDashBoardView.Show();
-            form.ShowDialog();
-        }
-
-        public interface IStrategy
+        private interface IStrategy
         {
             void Execute();
         }
 
-        public class OpenStrategy : IStrategy
+        private class OpenStrategy : IStrategy
         {
-            public event EventHandler<string> FileSelected;
+            internal event EventHandler<string> FileSelected;
 
             public void Execute()
             {
@@ -101,7 +88,7 @@ namespace EdfBrowser.App.View
             }
         }
 
-        public class CloseStrategy : IStrategy
+        private class CloseStrategy : IStrategy
         {
             public void Execute()
             {
@@ -109,9 +96,9 @@ namespace EdfBrowser.App.View
             }
         }
 
-        public static class StrategyFactory
+        private static class StrategyFactory
         {
-            public static IStrategy GetStrategy(string description)
+            internal static IStrategy GetStrategy(string description)
             {
                 switch (description)
                 {

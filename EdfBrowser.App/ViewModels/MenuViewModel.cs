@@ -1,41 +1,35 @@
-using EdfBrowser.App.Commands;
-using EdfBrowser.App.Store;
 using EdfBrowser.Models;
 using System.Collections.Generic;
 using System.Windows.Input;
 
-namespace EdfBrowser.App.ViewModels
+namespace EdfBrowser.App
 {
-    public class MenuViewModel
+    internal class MenuViewModel
     {
-        private readonly EdfDashBoardViewModel m_edfDashBoardViewModel;
+        private readonly MenuStore _menuStore;
 
-        private readonly MenuStore m_menuStore;
-
-        private MenuViewModel(MenuStore menuStore, EdfDashBoardViewModel edfDashBoardViewModel)
+        private MenuViewModel(MenuStore menuStore)
         {
-            m_menuStore = menuStore;
-            m_edfDashBoardViewModel = edfDashBoardViewModel;
+            _menuStore = menuStore;
 
             LoadMenuCommand = new RelayCommand(LoadMenu);
         }
 
-        public static MenuViewModel LoadMenus(MenuStore menuStore, EdfDashBoardViewModel edfDashBoardViewModel)
+        internal static MenuViewModel LoadMenus(MenuStore menuStore)
         {
-            MenuViewModel menuViewModel = new MenuViewModel(menuStore, edfDashBoardViewModel);
+            MenuViewModel menuViewModel = new MenuViewModel(menuStore);
             menuViewModel.LoadMenuCommand.Execute(null);
             return menuViewModel;
         }
 
-        public ICommand LoadMenuCommand { get; }
-        public IEnumerable<MenuStructure> Menus => m_menuStore.Menus;
+        internal ICommand LoadMenuCommand { get; }
+        internal IEnumerable<MenuStructure> Menus => _menuStore.Menus;
 
-        public EdfDashBoardViewModel EdfDashBoardViewModel => m_edfDashBoardViewModel;
 
         #region commands
         private void LoadMenu(object parameter)
         {
-            m_menuStore.LoadMenu();
+            _menuStore.LoadMenu();
         }
         #endregion
     }

@@ -2,27 +2,27 @@ using EdfBrowser.Models;
 using EdfBrowser.Services;
 using System.Collections.Generic;
 
-namespace EdfBrowser.App.Store
+namespace EdfBrowser.App
 {
-    public class MenuStore
+    internal class MenuStore
     {
-        private readonly Dictionary<string, List<string>> mock_dict = new Dictionary<string, List<string>>()
+        private readonly Dictionary<string, List<string>> _mocks = new Dictionary<string, List<string>>()
         {
             {"File", new List<string> (){ "Open", "Close" } },
         };
 
-        private readonly IMenuService m_menuService;
+        private readonly IMenuService _menuService;
 
-        public MenuStore(IMenuService menuService)
+        internal MenuStore(IMenuService menuService)
         {
-            m_menuService = menuService;
+            _menuService = menuService;
         }
 
-        public IEnumerable<MenuStructure> Menus { get; private set; }
+        internal IEnumerable<MenuStructure> Menus { get; private set; }
 
-        public void LoadMenu()
+        internal void LoadMenu()
         {
-            Menus = m_menuService.CreateMenuStructure(mock_dict);
+            Menus = _menuService.CreateMenuStructure(_mocks);
         }
     }
 }

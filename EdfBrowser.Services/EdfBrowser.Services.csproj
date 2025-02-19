@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net4.8</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EdfBrowser.EDF\EdfBrowser.EDF.csproj" />
+    <ProjectReference Include="..\..\EdfParser\Parser\Parser.csproj" />
     <ProjectReference Include="..\EdfBrowser.Models\EdfBrowser.Models.csproj" />
   </ItemGroup>
 

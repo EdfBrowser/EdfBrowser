@@ -1,6 +1,6 @@
-﻿namespace EdfBrowser.App.View
+namespace EdfBrowser.App
 {
-    partial class EdfDashBoardView
+    partial class PlotView
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,8 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // PlotView
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Name = "PlotView";
+            this.Size = new System.Drawing.Size(376, 298);
+            this.ResumeLayout(false);
+
         }
 
         #endregion

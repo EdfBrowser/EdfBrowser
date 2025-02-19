@@ -1,4 +1,4 @@
-﻿namespace EdfBrowser.App.View
+namespace EdfBrowser.App
 {
     partial class MenuView
     {

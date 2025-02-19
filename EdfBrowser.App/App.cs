@@ -1,7 +1,3 @@
-
-using EdfBrowser.App.Store;
-using EdfBrowser.App.View;
-using EdfBrowser.App.ViewModels;
 using EdfBrowser.Services;
 using System.Windows.Forms;
 
@@ -9,40 +5,60 @@ namespace EdfBrowser.App
 {
     public partial class App : Form
     {
-        private readonly IMenuService m_menuService;
-        private readonly IEdfService m_edfService;
+        private readonly IMenuService _menuService;
+        private readonly IEdfParserService _edfParserService;
 
-        private readonly MenuStore m_menuStore;
-        private readonly EdfStore m_edfStore;
+        private readonly MenuStore _menuStore;
 
-        private readonly MenuViewModel m_menuViewModel;
-        private readonly EdfDashBoardViewModel m_edfDashBoardViewModel;
+        private readonly MenuViewModel _menuViewModel;
+        private readonly PlotViewModel _plotViewModel;
 
+        private readonly PlotView _plotView;
         public App()
         {
             InitializeComponent();
 
 
-            m_edfService = new EdfService();
-            m_menuService = new MenuService();
+            _menuService = new MenuService();
+            _edfParserService = new EdfParserService();
 
-            m_edfStore = new EdfStore(m_edfService);
-            m_menuStore = new MenuStore(m_menuService);
+            _menuStore = new MenuStore(_menuService);
 
-            m_edfDashBoardViewModel = new EdfDashBoardViewModel(m_edfStore);
-            m_menuViewModel = MenuViewModel.LoadMenus(m_menuStore, m_edfDashBoardViewModel);
+            _menuViewModel = MenuViewModel.LoadMenus(_menuStore);
+            _plotViewModel = new PlotViewModel(_edfParserService);
+
+            _plotView = new PlotView(_plotViewModel);
+
 
             Load += App_Load;
         }
 
         private void App_Load(object sender, System.EventArgs e)
         {
-            MenuView menuView = new MenuView(m_menuViewModel);
-            menuView.Dock = DockStyle.Top;
+            MenuView menuView = new MenuView(_menuViewModel);
             menuView.Height = 30;
+            menuView.FileSelected += OnFileSelected;
+            menuView.Dock = DockStyle.Top;
+            menuView.Show();
 
+            _plotView.Dock = DockStyle.Fill;
+            _plotView.Show();
 
+            Controls.Add(_plotView);
             Controls.Add(menuView);
+        }
+
+        private void OnFileSelected(object sender, string path)
+        {
+            _plotViewModel.OpenEdfFileCommnad.Execute(path);
+
+            Timer timer = new Timer() { Enabled = true, Interval = 500 };
+            timer.Tick += Timer_Tick;
+        }
+
+        private void Timer_Tick(object sender, System.EventArgs e)
+        {
+            _plotViewModel.ReadSamplesCommnad.Execute(null);
         }
     }
 }

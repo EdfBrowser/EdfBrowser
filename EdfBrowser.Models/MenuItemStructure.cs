@@ -2,22 +2,22 @@ using System;
 
 namespace EdfBrowser.Models
 {
-    public struct MenuItemStructure
+    public readonly struct MenuItemStructure
     {
-        private readonly string m_name; // m_name of the menu item
+        private readonly string _name; // _name of the menu item
 
         public MenuItemStructure(string name)
         {
-            this.m_name = name;
+            this._name = name;
         }
 
-        public string Description => m_name;
+        public string Description => _name;
 
         public override bool Equals(object obj)
         {
             if (obj is MenuItemStructure other)
             {
-                return string.Equals(m_name, other.m_name, StringComparison.Ordinal);
+                return string.Equals(_name, other._name, StringComparison.Ordinal);
             }
 
             return false;
@@ -25,7 +25,7 @@ namespace EdfBrowser.Models
 
         public override int GetHashCode()
         {
-            return m_name != null ? m_name.GetHashCode() : 0;
+            return _name != null ? _name.GetHashCode() : 0;
         }
     }
 }
