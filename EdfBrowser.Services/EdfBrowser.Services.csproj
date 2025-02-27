@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EdfParser\Parser\Parser.csproj" />
+    <ProjectReference Include="..\EdfBrowser.EdfParser\EdfBrowser.EdfParser.csproj" />
     <ProjectReference Include="..\EdfBrowser.Models\EdfBrowser.Models.csproj" />
   </ItemGroup>
 

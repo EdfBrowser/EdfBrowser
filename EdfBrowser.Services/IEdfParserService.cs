@@ -1,4 +1,4 @@
-using Parser;
+using EdfBrowser.EdfParser;
 using System.Threading.Tasks;
 
 namespace EdfBrowser.Services
@@ -8,6 +8,6 @@ namespace EdfBrowser.Services
         void Initial(string edfFilePath);
 
         Task<EdfInfo> ReadEdfInfo();
-        Task<int> ReadPhysicalSamples(int signal, double[] buf);
+        Task<int> ReadPhysicalSamples(Sample sample);
     }
 }

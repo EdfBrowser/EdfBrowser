@@ -1,31 +1,34 @@
-using Parser;
-using System.IO;
+using EdfBrowser.EdfParser;
 using System.Threading.Tasks;
 
 namespace EdfBrowser.Services
 {
     public class EdfParserService : IEdfParserService
     {
-        private readonly Reader _reader;
-
-        public EdfParserService()
-        {
-            _reader = new Reader();
-        }
+        private EDFReader _reader;
 
         public void Initial(string edfFilePath)
         {
-            _reader.Initial(File.OpenRead(edfFilePath));
+            _reader?.Dispose();
+
+            _reader = new EDFReader(edfFilePath);
         }
 
         public async Task<EdfInfo> ReadEdfInfo()
         {
-            return await _reader.ReadEdfInfoAsync();
+            EdfInfo info = _reader.ReadHeader();
+
+            return await Task.FromResult(info);
         }
 
-        public async Task<int> ReadPhysicalSamples(int signal, double[] buf)
+        public async Task<int> ReadPhysicalSamples(Sample sample)
         {
-            return await _reader.ReadDataAsync(signal, buf);
+            // 用线程模拟
+            return await Task.Run(delegate
+            {
+                _reader.ReadPhysicalData(sample);
+                return 0;
+            });
         }
     }
 }

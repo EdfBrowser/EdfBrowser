@@ -56,9 +56,10 @@ namespace EdfBrowser.App
             timer.Tick += Timer_Tick;
         }
 
+        uint _start = 0;
         private void Timer_Tick(object sender, System.EventArgs e)
         {
-            _plotViewModel.ReadSamplesCommnad.Execute(null);
+            _plotViewModel.ReadSamplesCommnad.Execute(_start++);
         }
     }
 }

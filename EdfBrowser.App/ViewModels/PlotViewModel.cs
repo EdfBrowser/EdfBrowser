@@ -1,8 +1,6 @@
-using EdfBrowser.Models;
+using EdfBrowser.EdfParser;
 using EdfBrowser.Services;
-using Parser;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -11,11 +9,11 @@ namespace EdfBrowser.App
 {
     internal class PlotViewModel
     {
-        internal event EventHandler<IEnumerable<EdfSample>> SetSample;
-        internal event EventHandler<EdfInfo> ConfigurePlot;
+        // Event
+        internal event EventHandler SetSample;
+        internal event EventHandler ConfigurePlot;
 
         private readonly IEdfParserService _edfParserService;
-        private EdfSample[] _edfSamples;
 
         internal PlotViewModel(IEdfParserService edfParserService)
         {
@@ -27,6 +25,8 @@ namespace EdfBrowser.App
 
         internal ICommand OpenEdfFileCommnad { get; }
         internal ICommand ReadSamplesCommnad { get; }
+        internal EdfInfo EdfInfo { get; private set; }
+        internal Sample[] EdfSamples { get; private set; }
 
         #region commands
 
@@ -42,29 +42,34 @@ namespace EdfBrowser.App
 
             _edfParserService.Initial(edfFilePath);
 
-            EdfInfo EdfInfo = await _edfParserService.ReadEdfInfo();
+            // TODO: 是否为一个单独的行为
+            EdfInfo = await _edfParserService.ReadEdfInfo();
 
-            _edfSamples = new EdfSample[EdfInfo.Signals];
-            for (int i = 0; i < _edfSamples.Length; i++)
+            EdfSamples = new Sample[(int)EdfInfo._signalCount];
+            for (uint i = 0; i < EdfSamples.Length; i++)
             {
-                int channel = EdfInfo.SignalInfos[i].Channel;
-                int sample = EdfInfo.SignalInfos[i].Samples;
-                _edfSamples[i] = new EdfSample(channel, new double[sample]);
+                uint sample = EdfInfo._signals[i]._samples;
+                EdfSamples[i] = new Sample(sample, i);
             }
 
-
-            ConfigurePlot?.Invoke(this, EdfInfo);
+            ConfigurePlot?.Invoke(this, null);
         }
 
         private async Task ReadSamples(object parameter)
         {
-            foreach (var sample in _edfSamples)
+            var startRecord = parameter as uint?;
+            if (startRecord == null) startRecord = 0;
+
+            foreach (var sample in EdfSamples)
             {
+                sample.StartRecord = startRecord.Value;
+                sample.ReadCount = 1;
+
                 int count = await _edfParserService
-                    .ReadPhysicalSamples(sample.Signal, sample.Buf);
+                    .ReadPhysicalSamples(sample);
             }
 
-            SetSample?.Invoke(this, _edfSamples);
+            SetSample?.Invoke(this, null);
         }
 
         #endregion

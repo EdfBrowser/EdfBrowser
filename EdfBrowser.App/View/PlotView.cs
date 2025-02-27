@@ -1,9 +1,6 @@
-using EdfBrowser.Models;
-using Parser;
+using EdfBrowser.EdfParser;
 using Plot.Skia;
 using Plot.WinForm;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
@@ -33,9 +30,10 @@ namespace EdfBrowser.App
             Controls.Add(_figureForm);
         }
 
-        internal void ConfigurePlot(object sender, EdfInfo edfInfo)
+        internal void ConfigurePlot(object sender, System.EventArgs e)
         {
-            int ns = edfInfo.Signals;
+            EdfInfo info = _plotViewModel.EdfInfo;
+            uint ns = info._signalCount;
 
             Figure figure = _figureForm.Figure;
             AxisManager axisManager = figure.AxisManager;
@@ -43,7 +41,7 @@ namespace EdfBrowser.App
 
 
             IXAxis x = axisManager.DefaultBottom;
-            x.ScrollMode = AxisScrollMode.Stepping;
+            x.ScrollMode = AxisScrollMode.Scrolling;
 
             axisManager.Remove(Edge.Left);
 
@@ -51,24 +49,24 @@ namespace EdfBrowser.App
             {
                 IYAxis y = axisManager.AddNumericLeftAxis();
 
-                double samples = 1.0 / edfInfo.SignalInfos[0].Samples;
+                double samples = 1.0 / info._signals[i]._samples;
                 seriesManager.AddSignalSeries(x, y, samples);
             }
 
             _figureForm.Refresh();
         }
 
-        internal void SetSamples(object sender, IEnumerable<EdfSample> edfSamples)
+        internal void SetSamples(object sender, System.EventArgs e)
         {
             Figure figure = _figureForm.Figure;
             SeriesManager seriesManager = figure.SeriesManager;
 
             for (int i = 0; i < seriesManager.Series.Count; i++)
             {
-                EdfSample edfSample = edfSamples.ElementAt(i);
-                var sig = (SignalSeries)seriesManager.Series[edfSample.Signal];
+                Sample sample = _plotViewModel.EdfSamples[i];
+                var sig = (SignalSeries)seriesManager.Series[(int)sample.Index];
                 var source = (SignalSourceDouble)sig.SignalSource;
-                source.AddRange(edfSample.Buf);
+                source.AddRange(sample.Buffer);
                 sig.X.ScrollPosition = source.Length * source.SampleInterval;
             }
 
