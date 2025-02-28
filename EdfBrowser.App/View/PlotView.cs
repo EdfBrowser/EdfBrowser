@@ -19,14 +19,9 @@ namespace EdfBrowser.App
             _plotViewModel.ConfigurePlot += ConfigurePlot;
 
             _figureForm = new FigureForm();
-
-            Load += PlotView_Load;
-        }
-
-        private void PlotView_Load(object sender, System.EventArgs e)
-        {
             _figureForm.Dock = DockStyle.Fill;
             _figureForm.Show();
+
             Controls.Add(_figureForm);
         }
 

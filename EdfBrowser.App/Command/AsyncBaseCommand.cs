@@ -4,16 +4,11 @@ using System.Windows.Input;
 
 namespace EdfBrowser.App
 {
-    internal class AsyncRelayCommand : ICommand
+    internal abstract class AsyncBaseCommand : ICommand
     {
-        private readonly Func<object, Task> _execute;
-
         private bool _isExecuting;
 
-        internal AsyncRelayCommand(Func<object, Task> execute)
-        {
-            _execute = execute ?? throw new ArgumentNullException($"{nameof(execute)}");
-        }
+        protected AsyncBaseCommand() { }
 
 
         public event EventHandler CanExecuteChanged;
@@ -27,9 +22,11 @@ namespace EdfBrowser.App
         {
             _isExecuting = true;
 
-            await _execute(parameter);
+            await ExecuteAsync(parameter);
 
             _isExecuting = false;
         }
+
+        protected abstract Task ExecuteAsync(object parameter);
     }
 }

@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{589BEFD2-C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdfBrowser.EdfParser", "EdfBrowser.EdfParser\EdfBrowser.EdfParser.csproj", "{06679998-CB18-4683-95B7-CD0530C9DA4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdfBrowser.CustomControl", "EdfBrowser.CustomControl\EdfBrowser.CustomControl.csproj", "{AC4E2B22-A819-42FB-A63C-83458ABAB9D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{06679998-CB18-4683-95B7-CD0530C9DA4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06679998-CB18-4683-95B7-CD0530C9DA4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06679998-CB18-4683-95B7-CD0530C9DA4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC4E2B22-A819-42FB-A63C-83458ABAB9D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC4E2B22-A819-42FB-A63C-83458ABAB9D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC4E2B22-A819-42FB-A63C-83458ABAB9D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC4E2B22-A819-42FB-A63C-83458ABAB9D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{A8EEAA9D-8713-4345-B9D1-0A643DAC0BE3} = {589BEFD2-CA8B-4DE1-BE1F-85E5D9D517B7}
 		{4B34D00C-6F0C-4D0F-A8A0-4D2BD670DA8A} = {589BEFD2-CA8B-4DE1-BE1F-85E5D9D517B7}
 		{06679998-CB18-4683-95B7-CD0530C9DA4F} = {589BEFD2-CA8B-4DE1-BE1F-85E5D9D517B7}
+		{AC4E2B22-A819-42FB-A63C-83458ABAB9D5} = {589BEFD2-CA8B-4DE1-BE1F-85E5D9D517B7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D0E2EB66-8212-498C-BA6C-63635E186223}

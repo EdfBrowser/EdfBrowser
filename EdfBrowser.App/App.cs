@@ -1,4 +1,5 @@
 using EdfBrowser.Services;
+using System;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
@@ -12,8 +13,12 @@ namespace EdfBrowser.App
 
         private readonly MenuViewModel _menuViewModel;
         private readonly PlotViewModel _plotViewModel;
+        private readonly TimelineViewModel _timelineViewModel;
 
         private readonly PlotView _plotView;
+        private readonly MenuView _menuView;
+        private readonly TimelineView _timelineView;
+
         public App()
         {
             InitializeComponent();
@@ -26,40 +31,44 @@ namespace EdfBrowser.App
 
             _menuViewModel = MenuViewModel.LoadMenus(_menuStore);
             _plotViewModel = new PlotViewModel(_edfParserService);
+            _timelineViewModel = new TimelineViewModel();
+
+            _menuView = new MenuView(_menuViewModel);
+            _menuView.Height = 30;
+            _menuView.Dock = DockStyle.Top;
+            _menuView.Show();
+            _menuView.FileSelected += OnFileSelected;
 
             _plotView = new PlotView(_plotViewModel);
-
-
-            Load += App_Load;
-        }
-
-        private void App_Load(object sender, System.EventArgs e)
-        {
-            MenuView menuView = new MenuView(_menuViewModel);
-            menuView.Height = 30;
-            menuView.FileSelected += OnFileSelected;
-            menuView.Dock = DockStyle.Top;
-            menuView.Show();
-
             _plotView.Dock = DockStyle.Fill;
             _plotView.Show();
 
+            _timelineView = new TimelineView(_timelineViewModel);
+            _timelineView.Height = 20;
+            _timelineView.Dock = DockStyle.Bottom;
+            _timelineView.Enabled = false;
+            _timelineView.Show();
+            _timelineView.TimelineValueChanged += TimelineValueChanged;
+
             Controls.Add(_plotView);
-            Controls.Add(menuView);
+            Controls.Add(_menuView);
+            Controls.Add(_timelineView);
+        }
+
+        private void TimelineValueChanged(object sender, uint currentValue)
+        {
+            System.Diagnostics.Debug.WriteLine(currentValue);
+            _plotViewModel.ReadSamplesCommnad.Execute(currentValue);
         }
 
         private void OnFileSelected(object sender, string path)
         {
             _plotViewModel.OpenEdfFileCommnad.Execute(path);
+            _timelineView.Enabled = true;
 
-            Timer timer = new Timer() { Enabled = true, Interval = 500 };
-            timer.Tick += Timer_Tick;
-        }
-
-        uint _start = 0;
-        private void Timer_Tick(object sender, System.EventArgs e)
-        {
-            _plotViewModel.ReadSamplesCommnad.Execute(_start++);
+            //  «∑Ò”≈ªØ
+            double total = _plotViewModel.EdfInfo._recordCount * _plotViewModel.EdfInfo._recordDuration;
+            _timelineView.Initial( 0, total);
         }
     }
 }
