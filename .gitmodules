@@ -1,0 +1,6 @@
+[submodule "external/Edflib"]
+	path = external/Edflib
+	url = git@github.com:Edfbrowser/Edflib.git
+[submodule "external/Plot"]
+	path = external/Plot
+	url = git@github.com:Edfbrowser/Plot.git

@@ -7,14 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Plot.Skia" Version="1.0.1" />
-      <PackageReference Include="Plot.WinForm" Version="1.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\EdfBrowser.CustomControl\EdfBrowser.CustomControl.csproj" />
       <ProjectReference Include="..\EdfBrowser.Models\EdfBrowser.Models.csproj" />
       <ProjectReference Include="..\EdfBrowser.Services\EdfBrowser.Services.csproj" />
+      <ProjectReference Include="..\external\Plot\Plot.WinForm\Plot.WinForm.csproj" />
     </ItemGroup>
 
 </Project>
