@@ -23,7 +23,7 @@ namespace EdfBrowser.EdfParser
     }
 
     // 定义DLL路径常量
-    private const string DllPath = @"umanagedlibs\\edflib";
+    private const string DllPath = @"../edflib";
 
     // 生成所有方法
     private string GenerateMethods()

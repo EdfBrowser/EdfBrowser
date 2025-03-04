@@ -5,16 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="umanagedlibs\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="NativeMethod.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>NativeMethod.cs</LastGenOutput>
-    </None>
-    <None Update="umanagedlibs\edflib.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
