@@ -17,7 +17,7 @@ namespace EdfBrowser.App
 #elif NET
             ApplicationConfiguration.Initialize();
 #endif
-            Application.Run(new App());
+            Application.Run(new MainView());
         }
     }
 }

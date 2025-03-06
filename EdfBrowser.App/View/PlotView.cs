@@ -15,8 +15,7 @@ namespace EdfBrowser.App
             InitializeComponent();
 
             _plotViewModel = plotViewModel;
-            _plotViewModel.SetSample += SetSamples;
-            _plotViewModel.ConfigurePlot += ConfigurePlot;
+            _plotViewModel.PropertyChanged += OnPropertyChanged;
 
             _figureForm = new FigureForm();
             _figureForm.Dock = DockStyle.Fill;
@@ -25,7 +24,20 @@ namespace EdfBrowser.App
             Controls.Add(_figureForm);
         }
 
-        internal void ConfigurePlot(object sender, System.EventArgs e)
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            // Reset;
+            if (e.PropertyName == nameof(PlotViewModel.EdfInfo))
+            {
+                Reset();
+            }
+            else if (e.PropertyName == nameof(PlotViewModel.EdfSamples))
+            {
+                SetSamples();
+            }
+        }
+
+        private void Reset()
         {
             EdfInfo info = _plotViewModel.EdfInfo;
             uint ns = info._signalCount;
@@ -34,13 +46,14 @@ namespace EdfBrowser.App
             AxisManager axisManager = figure.AxisManager;
             SeriesManager seriesManager = figure.SeriesManager;
 
-
-            IXAxis x = axisManager.DefaultBottom;
+            // reset
+            axisManager.Remove(Edge.Bottom);
+            IXAxis x = axisManager.AddNumericBottomAxis();
             x.ScrollMode = AxisScrollMode.Scrolling;
 
             axisManager.Remove(Edge.Left);
 
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 8; i++)
             {
                 IYAxis y = axisManager.AddNumericLeftAxis();
 
@@ -51,7 +64,7 @@ namespace EdfBrowser.App
             _figureForm.Refresh();
         }
 
-        internal void SetSamples(object sender, System.EventArgs e)
+        private void SetSamples()
         {
             Figure figure = _figureForm.Figure;
             SeriesManager seriesManager = figure.SeriesManager;
@@ -64,7 +77,6 @@ namespace EdfBrowser.App
                 source.AddRange(sample.Buffer);
                 sig.X.ScrollPosition = source.Length * source.SampleInterval;
             }
-
 
             figure.RenderManager.Fit();
             _figureForm.Refresh();

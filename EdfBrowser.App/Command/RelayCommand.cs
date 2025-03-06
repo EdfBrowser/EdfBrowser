@@ -1,28 +1,22 @@
 using System;
-using System.Windows.Input;
 
 namespace EdfBrowser.App
 {
-    internal class RelayCommand : ICommand
+    internal class RelayCommand : BaseCommand
     {
         private readonly Action<object> _execute;
-        private readonly Func<object, bool> _canExecute;
 
-        internal RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
+        internal RelayCommand(Action<object> execute)
         {
             _execute = execute ?? throw new ArgumentNullException($"{nameof(execute)}");
-            _canExecute = canExecute;
         }
 
-
-        public event EventHandler CanExecuteChanged;
-
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
-            return _canExecute == null || _canExecute(parameter);
+            return base.CanExecute(parameter);
         }
 
-        public void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             _execute(parameter);
         }

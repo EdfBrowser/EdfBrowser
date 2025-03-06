@@ -5,7 +5,7 @@ namespace EdfBrowser.Services
 {
     public interface IEdfParserService
     {
-        void Initial(string edfFilePath);
+        void SetFilePath(string edfFilePath);
 
         Task<EdfInfo> ReadEdfInfo();
         Task<int> ReadPhysicalSamples(Sample sample);

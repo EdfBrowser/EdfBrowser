@@ -1,6 +1,6 @@
 namespace EdfBrowser.App
 {
-    partial class App
+    partial class MainView
     {
         /// <summary>
         ///  Required designer variable.

@@ -5,7 +5,7 @@ namespace EdfBrowser.EdfParser
 {
     internal static class NativeMethod
     {
-    
+
         [DllImport("../edflib", EntryPoint = "edf_open", CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr EdfOpen(
             string filepath);

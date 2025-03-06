@@ -7,7 +7,7 @@ namespace EdfBrowser.Services
     {
         private EDFReader _reader;
 
-        public void Initial(string edfFilePath)
+        public void SetFilePath(string edfFilePath)
         {
             _reader?.Dispose();
 

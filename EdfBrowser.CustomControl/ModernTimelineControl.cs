@@ -50,7 +50,7 @@ namespace EdfBrowser.CustomControl
                 Refresh();
             }
         }
-        
+
         public double MaxValue
         {
             get => _maxValue;

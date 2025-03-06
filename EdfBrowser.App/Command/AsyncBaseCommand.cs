@@ -1,24 +1,17 @@
-using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace EdfBrowser.App
 {
-    internal abstract class AsyncBaseCommand : ICommand
+    internal abstract class AsyncBaseCommand : BaseCommand
     {
         private bool _isExecuting;
 
-        protected AsyncBaseCommand() { }
-
-
-        public event EventHandler CanExecuteChanged;
-
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
-            return !_isExecuting;
+            return !_isExecuting && base.CanExecute(parameter);
         }
 
-        public async void Execute(object parameter)
+        public override async void Execute(object parameter)
         {
             _isExecuting = true;
 

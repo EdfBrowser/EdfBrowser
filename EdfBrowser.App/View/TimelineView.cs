@@ -1,5 +1,4 @@
-﻿using EdfBrowser.CustomControl;
-using System;
+using EdfBrowser.CustomControl;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
@@ -9,13 +8,13 @@ namespace EdfBrowser.App
         private readonly TimelineViewModel _timelineViewModel;
         private readonly ModernTimelineControl _timelineControl;
 
-        internal event EventHandler<uint> TimelineValueChanged;
-
+        // TODO: dispose event
         internal TimelineView(TimelineViewModel timelineViewModel)
         {
             InitializeComponent();
 
             _timelineViewModel = timelineViewModel;
+            _timelineViewModel.PropertyChanged += OnPropertyChanged;
 
             _timelineControl = new ModernTimelineControl();
             _timelineControl.Dock = DockStyle.Fill;
@@ -24,10 +23,18 @@ namespace EdfBrowser.App
             Controls.Add(_timelineControl);
         }
 
-        private void ValueChanged(object sender, System.EventArgs e)
-            => TimelineValueChanged?.Invoke(this, (uint)_timelineControl.CurrentValue);
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(_timelineViewModel.MaxValue))
+            {
+                Initial(0, _timelineViewModel.MaxValue);
+            }
+        }
 
-        internal void Initial(double minValue, double maxValue)
+        private void ValueChanged(object sender, System.EventArgs e)
+            => _timelineViewModel.CurrentValue = (uint)_timelineControl.CurrentValue;
+
+        private void Initial(double minValue, double maxValue)
         {
             _timelineControl.CurrentValue = 0d;
             _timelineControl.MinValue = minValue;
