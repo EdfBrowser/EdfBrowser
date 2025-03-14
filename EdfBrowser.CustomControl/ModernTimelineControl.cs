@@ -7,10 +7,9 @@ namespace EdfBrowser.CustomControl
 {
     public partial class ModernTimelineControl : Control
     {
-        // 颜色配置 (使用Edge滚动条配色)
+        // 颜色配置
         private readonly Color _trackColor = Color.FromArgb(225, 225, 225);
         private readonly Color _sliderIdleColor = Color.FromArgb(140, 140, 140);
-        private readonly Color _sliderHoverColor = Color.FromArgb(100, 100, 100);
         private readonly Color _sliderDraggingColor = Color.FromArgb(80, 80, 80);
 
         // 尺寸配置
@@ -21,13 +20,11 @@ namespace EdfBrowser.CustomControl
         // 数值范围
         private double _minValue = 0d;
         private double _maxValue = 100d;
-        private double _currentValue = 5d;
+        private double _currentValue = 0d;
 
         // 交互状态
         private bool _isDragging = false;
-        private bool _isHovered = false;
-
-        public event EventHandler ValueChanged;
+        private Cursor _defaultCursor;
 
         public ModernTimelineControl()
         {
@@ -37,9 +34,9 @@ namespace EdfBrowser.CustomControl
             BackColor = Color.White;
             Width = 100;
             Height = 50;
-
-            Cursor = Cursors.Hand;
         }
+
+        public event EventHandler ValueChanged;
 
         public double MinValue
         {
@@ -104,8 +101,7 @@ namespace EdfBrowser.CustomControl
             // 滑块 
             RectangleF sliderRect = GetSliderRect();
 
-            Color sliderColor = _isDragging ? _sliderDraggingColor :
-                _isHovered ? _sliderHoverColor : _sliderIdleColor;
+            Color sliderColor = _isDragging ? _sliderDraggingColor : _sliderIdleColor;
             using (SolidBrush slidingBrush = new SolidBrush(sliderColor))
             using (GraphicsPath path = CreateRoundedRect(sliderRect, SliderRadius))
             {
@@ -130,23 +126,21 @@ namespace EdfBrowser.CustomControl
             return new RectangleF(sliderX, SPACE, SliderMinWidth, Height - 2 * SPACE);
         }
 
+        private void GetMousePosition(MouseEventArgs e)
+        {
+            float newX = e.X - SliderMinWidth;
+            newX = NumericConversion.Clamp(newX, 0, Width - SliderMinWidth);
+            _currentValue = ToValue(newX);
+        }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
 
-            // 更新悬停状态
-            bool wasHovered = _isHovered;
-            _isHovered = GetSliderRect().Contains(e.Location);
-            if (_isHovered != wasHovered) Refresh();
-
             // 处理拖动
             if (_isDragging)
             {
-                float newX = e.X - SliderMinWidth / 2;
-                newX = NumericConversion.Clamp(newX, 0, Width - SliderMinWidth);
-                _currentValue = ToValue(newX);
-                ValueChanged?.Invoke(this, EventArgs.Empty);
+                GetMousePosition(e);
                 Refresh();
             }
         }
@@ -158,15 +152,9 @@ namespace EdfBrowser.CustomControl
             if (GetSliderRect().Contains(e.Location))
             {
                 _isDragging = true;
-                //Capture = true;
 
-                Refresh();
-            }
-            else if (e.Y >= SPACE && e.Y < Height - 2 * SPACE) // 点击轨道跳转
-            {
-                _currentValue = ToValue(e.X - SliderMinWidth / 2);
-                ValueChanged?.Invoke(this, EventArgs.Empty);
-                Refresh();
+                _defaultCursor = Cursor;
+                Cursor = Cursors.Hand;
             }
         }
 
@@ -175,7 +163,10 @@ namespace EdfBrowser.CustomControl
             base.OnMouseUp(e);
 
             _isDragging = false;
-            Refresh();
+            Cursor = _defaultCursor;
+            Refresh(); // 恢复原状
+
+            ValueChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 

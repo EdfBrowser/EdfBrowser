@@ -1,4 +1,4 @@
-using EdfBrowser.Models;
+using EdfBrowser.Model;
 using EdfBrowser.Services;
 using System.Collections.Generic;
 using System.Windows.Forms;

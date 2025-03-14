@@ -1,6 +1,9 @@
 using EdfBrowser.EdfParser;
+using EdfBrowser.Model;
 using Plot.Skia;
 using Plot.WinForm;
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
@@ -9,10 +12,17 @@ namespace EdfBrowser.App
     {
         private readonly PlotViewModel _plotViewModel;
         private readonly FigureForm _figureForm;
+        private readonly Dictionary<string, Action> _actions;
 
         internal PlotView(PlotViewModel plotViewModel)
         {
             InitializeComponent();
+
+            _actions = new Dictionary<string, Action>()
+            {
+                {nameof(PlotViewModel.EdfInfo), Reset },
+                {nameof(PlotViewModel.DataRecords), UpdatedPlot },
+            };
 
             _plotViewModel = plotViewModel;
             _plotViewModel.PropertyChanged += OnPropertyChanged;
@@ -26,15 +36,8 @@ namespace EdfBrowser.App
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            // Reset;
-            if (e.PropertyName == nameof(PlotViewModel.EdfInfo))
-            {
-                Reset();
-            }
-            else if (e.PropertyName == nameof(PlotViewModel.EdfSamples))
-            {
-                SetSamples();
-            }
+            _actions.TryGetValue(e.PropertyName, out Action action);
+            action.Invoke();
         }
 
         private void Reset()
@@ -64,17 +67,17 @@ namespace EdfBrowser.App
             _figureForm.Refresh();
         }
 
-        private void SetSamples()
+        private void UpdatedPlot()
         {
             Figure figure = _figureForm.Figure;
             SeriesManager seriesManager = figure.SeriesManager;
 
             for (int i = 0; i < seriesManager.Series.Count; i++)
             {
-                Sample sample = _plotViewModel.EdfSamples[i];
-                var sig = (SignalSeries)seriesManager.Series[(int)sample.Index];
+                DataRecord dataRecord = _plotViewModel.DataRecords[i];
+                var sig = (SignalSeries)seriesManager.Series[(int)dataRecord.Index];
                 var source = (SignalSourceDouble)sig.SignalSource;
-                source.AddRange(sample.Buffer);
+                source.AddRange(dataRecord.Buffer);
                 sig.X.ScrollPosition = source.Length * source.SampleInterval;
             }
 

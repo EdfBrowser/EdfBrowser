@@ -1,5 +1,6 @@
 using EdfBrowser.EdfParser;
 using System.Threading.Tasks;
+using EdfBrowser.Model;
 
 namespace EdfBrowser.Services
 {
@@ -8,6 +9,6 @@ namespace EdfBrowser.Services
         void SetFilePath(string edfFilePath);
 
         Task<EdfInfo> ReadEdfInfo();
-        Task<int> ReadPhysicalSamples(Sample sample);
+        Task ReadPhysicalSamples(DataRecord dataRecord);
     }
 }

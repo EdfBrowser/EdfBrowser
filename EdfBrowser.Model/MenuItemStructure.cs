@@ -1,6 +1,6 @@
 using System;
 
-namespace EdfBrowser.Models
+namespace EdfBrowser.Model
 {
     public readonly struct MenuItemStructure
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EdfBrowser.Models
+namespace EdfBrowser.Model
 {
     public readonly struct MenuStructure
     {

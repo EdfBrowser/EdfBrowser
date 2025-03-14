@@ -1,5 +1,7 @@
 using EdfBrowser.EdfParser;
 using System.Threading.Tasks;
+using EdfBrowser.Model;
+using System.Diagnostics.Tracing;
 
 namespace EdfBrowser.Services
 {
@@ -21,13 +23,12 @@ namespace EdfBrowser.Services
             return await Task.FromResult(info);
         }
 
-        public async Task<int> ReadPhysicalSamples(Sample sample)
+        public async Task ReadPhysicalSamples(DataRecord dataRecord)
         {
             // 用线程模拟
-            return await Task.Run(delegate
+            await Task.Run(delegate
             {
-                _reader.ReadPhysicalData(sample);
-                return 0;
+                _reader.ReadPhysicalData(dataRecord);
             });
         }
     }

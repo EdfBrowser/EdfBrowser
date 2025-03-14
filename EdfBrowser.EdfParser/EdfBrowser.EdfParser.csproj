@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EdfBrowser.Model\EdfBrowser.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="NativeMethod.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>NativeMethod.cs</LastGenOutput>

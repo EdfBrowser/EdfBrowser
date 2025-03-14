@@ -1,4 +1,4 @@
-﻿using EdfBrowser.Models;
+using EdfBrowser.Model;
 using System.Collections.Generic;
 
 namespace EdfBrowser.Services

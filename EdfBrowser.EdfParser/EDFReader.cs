@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using EdfBrowser.Model;
 
 namespace EdfBrowser.EdfParser
 {
@@ -9,6 +10,16 @@ namespace EdfBrowser.EdfParser
         private bool _disposed = false;
 
         private SignalTransform[] _signalTransforms;
+
+        private void ToPhsyicalVal(DataRecord dataRecord)
+        {
+            var transform = _signalTransforms[dataRecord.Index];
+            for (int i = 0; i < dataRecord.Length; i++)
+            {
+                dataRecord.Buffer[i] = transform.Unit * (dataRecord.Buffer[i] + transform.Offset);
+                // buf[i] = (raw - dataInfo.DMin) * dataInfo.Unit + dataInfo.PMin;
+            }
+        }
 
         public EDFReader(string filepath)
         {
@@ -46,32 +57,29 @@ namespace EdfBrowser.EdfParser
             }
         }
 
-        public void ReadPhysicalData(Sample sample)
-        {
-            ReadDigitalData(sample);
 
-            var transform = _signalTransforms[sample.Index];
-            for (int i = 0; i < sample.Length; i++)
-            {
-                sample.Buffer[i] = transform.Unit * (sample.Buffer[i] + transform.Offset);
-                // buf[i] = (raw - dataInfo.DMin) * dataInfo.Unit + dataInfo.PMin;
-            }
+        public void ReadPhysicalData(DataRecord dataRecord)
+        {
+            if (dataRecord == null)
+                throw new ArgumentNullException(nameof(dataRecord));
+
+            ReadDigitalData(dataRecord);
+            ToPhsyicalVal(dataRecord);
         }
 
-
-        public void ReadDigitalData(Sample sample)
+        public void ReadDigitalData(DataRecord dataRecord)
         {
-            if (sample.Buffer == null)
-                throw new ArgumentNullException(nameof(sample.Buffer));
+            if (dataRecord == null)
+                throw new ArgumentNullException(nameof(dataRecord));
 
             // sizeof(short) == 2;
-            IntPtr ptr = Marshal.AllocHGlobal((int)sample.Length * 2);
+            IntPtr ptr = Marshal.AllocHGlobal((int)dataRecord.Length * 2);
 
             try
             {
                 int result = NativeMethod.EdfReadSignalData(
-                    _handle, ptr, sample.Index, sample.StartRecord,
-                    sample.ReadCount);
+                    _handle, ptr, dataRecord.Index, dataRecord.StartRecord,
+                    dataRecord.ReadCount);
                 if (result != 0)
                     throw new EDFException($"Read signal data error: {result}");
 
@@ -81,7 +89,8 @@ namespace EdfBrowser.EdfParser
                 //     System.Console.WriteLine(Convert.ToString(b, 2));
                 // }
 
-                for (int i = 0; i < sample.Length; i++)
+                dataRecord.Clear();
+                for (int i = 0; i < dataRecord.Length; i++)
                 {
                     byte one = Marshal.ReadByte(ptr, 2 * i);
                     byte two = Marshal.ReadByte(ptr, 2 * i + 1);
@@ -90,7 +99,7 @@ namespace EdfBrowser.EdfParser
                     short raw = (short)((one) | (two << 8));
                     // raw = Marshal.ReadInt16(ptr, 2 * i);
 
-                    sample.Buffer[i] = raw;
+                    dataRecord.Add(raw);
                     //buf[i] = dataInfo.Unit * (raw + dataInfo.Offset);
                     // buf[i] = (raw - dataInfo.DMin) * dataInfo.Unit + dataInfo.PMin;
                 }

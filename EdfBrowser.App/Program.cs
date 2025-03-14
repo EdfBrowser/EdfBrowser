@@ -1,13 +1,34 @@
+using EdfBrowser.Services;
 using System;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
 {
-    internal static class Program
+    internal class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
+        private readonly MainView _mainView;
+        private readonly MainViewModel _mainViewModel;
+        private readonly EdfStore _edfStore;
+        private readonly NavigationStore _navigationStore;
+        private readonly IMenuService _menuService;
+        private readonly IEdfParserService _edfParserService;
+
+        internal Program()
+        {
+            _menuService = new MenuService();
+            _edfParserService = new EdfParserService();
+
+            _edfStore = new EdfStore(_edfParserService);
+
+            _navigationStore = new NavigationStore();
+
+            _mainViewModel = new MainViewModel(_menuService, _edfStore, _navigationStore);
+            _mainView = new MainView(_mainViewModel);
+
+            var navigationService = CreateEdfPlotNavigationService();
+            navigationService.Navigate();
+        }
+
         [STAThread]
         static void Main()
         {
@@ -17,7 +38,25 @@ namespace EdfBrowser.App
 #elif NET
             ApplicationConfiguration.Initialize();
 #endif
-            Application.Run(new MainView());
+            Program program = new Program();
+            program.Run();
+        }
+
+        private void Run()
+        {
+            Application.Run(_mainView);
+        }
+
+        private NavigationService<SignalListViewModel> CreateSignalListNavigationService()
+        {
+            return new NavigationService<SignalListViewModel>(_navigationStore,
+                () => new SignalListViewModel(_edfStore));
+        }
+
+        private NavigationService<EdfPlotViewModel> CreateEdfPlotNavigationService()
+        {
+            return new NavigationService<EdfPlotViewModel>(_navigationStore,
+                () => new EdfPlotViewModel(_edfStore));
         }
     }
 }
