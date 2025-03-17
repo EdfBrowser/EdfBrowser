@@ -22,11 +22,10 @@ namespace EdfBrowser.App
 
             _navigationStore = new NavigationStore();
 
-            _mainViewModel = new MainViewModel(_menuService, _edfStore, _navigationStore);
+            _mainViewModel = new MainViewModel(_menuService, _edfStore,
+                CreateSignalListNavigationService(),
+                _navigationStore);
             _mainView = new MainView(_mainViewModel);
-
-            var navigationService = CreateEdfPlotNavigationService();
-            navigationService.Navigate();
         }
 
         [STAThread]
@@ -50,7 +49,7 @@ namespace EdfBrowser.App
         private NavigationService<SignalListViewModel> CreateSignalListNavigationService()
         {
             return new NavigationService<SignalListViewModel>(_navigationStore,
-                () => new SignalListViewModel(_edfStore));
+                () => new SignalListViewModel(_edfStore, CreateEdfPlotNavigationService()));
         }
 
         private NavigationService<EdfPlotViewModel> CreateEdfPlotNavigationService()

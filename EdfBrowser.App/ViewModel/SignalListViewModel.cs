@@ -2,6 +2,8 @@ using EdfBrowser.EdfParser;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows.Input;
 
 namespace EdfBrowser.App
@@ -9,22 +11,24 @@ namespace EdfBrowser.App
     internal class SignalListViewModel : BaseViewModel
     {
         private readonly EdfStore _edfStore;
+        private readonly NavigationService<EdfPlotViewModel> _navigationService;
 
-        internal SignalListViewModel(EdfStore edfStore)
+        internal SignalListViewModel(EdfStore edfStore,
+            NavigationService<EdfPlotViewModel> navigationService)
         {
             _edfStore = edfStore;
             _edfStore.EdfFilePathChanged += OnEdfFilePathChanged;
+            _navigationService = navigationService;
 
             AddSignalCommand = new RelayCommand(AddSignal);
             RemoveSignalCommand = new RelayCommand(RemoveSignal);
             CompletedCommand = new RelayCommand(Completed);
-
-            SignalItems = new ObservableCollection<SignalItem>();
-            SelectedSignalItems = new ObservableCollection<SignalItem>();
         }
 
-        internal ObservableCollection<SignalItem> SignalItems { get; private set; }
-        internal ObservableCollection<SignalItem> SelectedSignalItems { get; private set; }
+        internal ObservableCollection<SignalItem> SignalItems => _edfStore.SignalItems;
+        internal ObservableCollection<SignalItem> SelectedSignalItems => _edfStore.SelectedSignalItems;
+
+
         internal ICommand AddSignalCommand { get; }
         internal ICommand RemoveSignalCommand { get; }
         internal ICommand CompletedCommand { get; }
@@ -38,12 +42,13 @@ namespace EdfBrowser.App
         {
             await _edfStore.ReadInfo();
 
-            SignalItems.Clear();
+            _edfStore.Clear();
 
             for (int i = 0; i < _edfStore.EdfInfo._signalCount; i++)
             {
                 SignalInfo signal = _edfStore.EdfInfo._signals[i];
-                SignalItems.Add(new SignalItem() { Label = new string(signal._label), SampleRate = signal._samples });
+                SignalItem signalItem = new SignalItem(signal);
+                _edfStore.AddSignal(signalItem);
             }
         }
 
@@ -57,7 +62,7 @@ namespace EdfBrowser.App
                     if (SelectedSignalItems.Contains(item))
                         continue;
 
-                    SelectedSignalItems.Add(item);
+                    _edfStore.AddSelectedSignal(item);
                 }
             }
         }
@@ -68,14 +73,14 @@ namespace EdfBrowser.App
             {
                 foreach (SignalItem item in selectedItems)
                 {
-                    SelectedSignalItems.Remove(item);
+                    _edfStore.RemoveSelectedSignal(item);
                 }
             }
         }
 
         private void Completed(object parameter)
         {
-
+            _navigationService.Navigate();
         }
     }
 }

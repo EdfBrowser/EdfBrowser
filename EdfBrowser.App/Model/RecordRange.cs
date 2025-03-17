@@ -4,5 +4,6 @@ namespace EdfBrowser.App
     {
         internal uint Start { get; set; }
         internal uint End { get; set; }
+        internal bool Forward => Start < End;
     }
 }

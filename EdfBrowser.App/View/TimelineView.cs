@@ -19,9 +19,10 @@ namespace EdfBrowser.App
             _timelineControl = new ModernTimelineControl();
             _timelineControl.Dock = DockStyle.Fill;
             _timelineControl.ValueChanged += ValueChanged;
-            _timelineControl.Enabled = false;
 
             Controls.Add(_timelineControl);
+
+            Initial(0, _timelineViewModel.MaxValue);
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -29,7 +30,6 @@ namespace EdfBrowser.App
             if (e.PropertyName == nameof(_timelineViewModel.MaxValue))
             {
                 Initial(0, _timelineViewModel.MaxValue);
-                _timelineControl.Enabled = true;
             }
         }
 

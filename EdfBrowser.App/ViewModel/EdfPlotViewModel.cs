@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 
 namespace EdfBrowser.App
@@ -10,11 +9,15 @@ namespace EdfBrowser.App
         internal EdfPlotViewModel(EdfStore edfStore)
         {
             _edfStore = edfStore;
-            //_edfStore.EdfFilePathChanged += OnEdfFilePathChanged;
 
             PlotViewModel = new PlotViewModel(edfStore);
             TimelineViewModel = new TimelineViewModel();
             TimelineViewModel.TimelineValueChanged += OnTimelineValueChanged;
+
+            double totalDuration = _edfStore.EdfInfo._recordDuration * _edfStore.EdfInfo._recordCount;
+            TimelineViewModel.MaxValue = totalDuration;
+
+            PlotViewModel.ResetCommnad.Execute(null);
         }
 
         internal PlotViewModel PlotViewModel { get; }
@@ -22,18 +25,7 @@ namespace EdfBrowser.App
 
         protected override void Dispose(bool disposing)
         {
-            _edfStore.EdfFilePathChanged -= OnEdfFilePathChanged;
             TimelineViewModel.TimelineValueChanged -= OnTimelineValueChanged;
-        }
-
-        private async void OnEdfFilePathChanged(object sender, EventArgs e)
-        {
-            //await _edfStore.ReadInfo();
-
-            double totalDuration = _edfStore.EdfInfo._recordDuration * _edfStore.EdfInfo._recordCount;
-            TimelineViewModel.MaxValue = totalDuration;
-
-            PlotViewModel.ResetCommnad.Execute(null);
         }
 
         private uint _oldVal = 0u;
@@ -45,9 +37,6 @@ namespace EdfBrowser.App
             _range.End = e;
 
             PlotViewModel.ReadSamplesCommnad.Execute(_range);
-            //PlotViewModel.UpdatedPlotCommnad.Execute(null);
-
-            Debug.WriteLine(e);
 
             _oldVal = e;
         }

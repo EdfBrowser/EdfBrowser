@@ -6,9 +6,11 @@ namespace EdfBrowser.App
     {
         private readonly NavigationStore _navigationStore;
 
-        internal MainViewModel(IMenuService menuService, EdfStore edfStore, NavigationStore navigationStore)
+        internal MainViewModel(IMenuService menuService, EdfStore edfStore,
+            NavigationService<SignalListViewModel> navigationService,
+            NavigationStore navigationStore)
         {
-            MenuViewModel = MenuViewModel.LoadMenus(menuService, edfStore);
+            MenuViewModel = MenuViewModel.LoadMenus(menuService, edfStore, navigationService);
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
         }

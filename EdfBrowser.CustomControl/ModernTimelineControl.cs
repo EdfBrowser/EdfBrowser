@@ -26,10 +26,23 @@ namespace EdfBrowser.CustomControl
         private bool _isDragging = false;
         private Cursor _defaultCursor;
 
+        // button
+        private const float ButtonWidth = 30f;
+        private readonly Color _buttonColor = Color.FromArgb(180, 180, 180);
+        private readonly Color _buttonHoverColor = Color.FromArgb(120, 120, 120);
+        private bool _leftButtonHovered;
+        private bool _rightButtonHovered;
+        private RectangleF _leftButtonRect;
+        private RectangleF _rightButtonRect;
+
+        // track width 
+        private float _railWidth => Width - SliderMinWidth - 2 * ButtonWidth;
+
         public ModernTimelineControl()
         {
             InitializeComponent();
             DoubleBuffered = true;
+            SetStyle(ControlStyles.ResizeRedraw, true);
 
             BackColor = Color.White;
             Width = 100;
@@ -73,15 +86,33 @@ namespace EdfBrowser.CustomControl
         {
             double total = (_maxValue - _minValue);
             double current = (value - _minValue);
-            double trackWidth = Width - SliderMinWidth;
-            return (float)((current / total) * trackWidth);
+            return (float)((current / total) * _railWidth) + ButtonWidth;
         }
 
         private double ToValue(float position)
         {
-            double trackWidth = Width - SliderMinWidth;
-            double ratio = (double)position / trackWidth;
+            double ratio = (double)(position - ButtonWidth) / _railWidth;
             return _minValue + (_maxValue - _minValue) * ratio;
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+
+            UpdateButtonRects();
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+
+
+        }
+
+        private void UpdateButtonRects()
+        {
+            _leftButtonRect = new RectangleF(0, 0, ButtonWidth, Height);
+            _rightButtonRect = new RectangleF(Width - ButtonWidth, 0, ButtonWidth, Height);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -91,10 +122,15 @@ namespace EdfBrowser.CustomControl
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
+            // 绘制左右按钮
+            DrawButton(g, _leftButtonRect, _leftButtonHovered, ArrowDirection.Left);
+            DrawButton(g, _rightButtonRect, _rightButtonHovered, ArrowDirection.Right);
+
+
             // 轨道
+            RectangleF railRect = new RectangleF(ButtonWidth, 0, Width - 2 * ButtonWidth, Height);
             using (SolidBrush railBrush = new SolidBrush(_trackColor))
             {
-                Rectangle railRect = new Rectangle(0, 0, Width, Height);
                 g.FillRectangle(railBrush, railRect);
             }
 
@@ -108,6 +144,42 @@ namespace EdfBrowser.CustomControl
                 g.FillPath(slidingBrush, path);
             }
         }
+
+        private void DrawButton(Graphics g, RectangleF rect, bool hovered, ArrowDirection direction)
+        {
+            using (var path = CreateArrowPath(rect, direction))
+            using (var brush = new SolidBrush(hovered ? _buttonHoverColor : _buttonColor))
+            {
+                g.FillPath(brush, path);
+            }
+        }
+
+        private GraphicsPath CreateArrowPath(RectangleF rect, ArrowDirection direction)
+        {
+            var path = new GraphicsPath();
+            float arrowSize = rect.Height * 0.3f;
+
+            switch (direction)
+            {
+                case ArrowDirection.Left:
+                    path.AddLines(new[] {
+                        new PointF(rect.Right - arrowSize, rect.Top),
+                        new PointF(rect.Left + arrowSize, rect.Top + rect.Height/2),
+                        new PointF(rect.Right - arrowSize, rect.Bottom)
+                    });
+                    break;
+                case ArrowDirection.Right:
+                    path.AddLines(new[] {
+                        new PointF(rect.Left + arrowSize, rect.Top),
+                        new PointF(rect.Right - arrowSize, rect.Top + rect.Height/2),
+                        new PointF(rect.Left + arrowSize, rect.Bottom)
+                    });
+                    break;
+            }
+            return path;
+        }
+
+
 
         private GraphicsPath CreateRoundedRect(RectangleF rect, float radius)
         {
@@ -128,8 +200,8 @@ namespace EdfBrowser.CustomControl
 
         private void GetMousePosition(MouseEventArgs e)
         {
-            float newX = e.X - SliderMinWidth;
-            newX = NumericConversion.Clamp(newX, 0, Width - SliderMinWidth);
+            float newX = e.X;
+            newX = NumericConversion.Clamp(newX, ButtonWidth, _railWidth + ButtonWidth);
             _currentValue = ToValue(newX);
         }
 
@@ -141,8 +213,22 @@ namespace EdfBrowser.CustomControl
             if (_isDragging)
             {
                 GetMousePosition(e);
-                Refresh();
+                Invalidate();
+                return;
             }
+
+            // 更新按钮悬停状态
+            _leftButtonHovered = _leftButtonRect.Contains(e.Location);
+            _rightButtonHovered = _rightButtonRect.Contains(e.Location);
+
+            // 更新光标显示
+            Cursor = _leftButtonHovered || _rightButtonHovered
+                ? Cursors.Hand
+                : _defaultCursor;
+
+            // 请求重绘更新按钮状态
+            if (_leftButtonHovered || _rightButtonHovered)
+                Invalidate();
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -156,6 +242,21 @@ namespace EdfBrowser.CustomControl
                 _defaultCursor = Cursor;
                 Cursor = Cursors.Hand;
             }
+
+
+            if (_leftButtonHovered)
+            {
+                CurrentValue = Math.Max(_minValue, CurrentValue - 5);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
+            if (_rightButtonHovered)
+            {
+                CurrentValue = Math.Min(_maxValue, CurrentValue + 5);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
+                return;
+            }
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
@@ -164,7 +265,7 @@ namespace EdfBrowser.CustomControl
 
             _isDragging = false;
             Cursor = _defaultCursor;
-            Refresh(); // 恢复原状
+            Invalidate();// 恢复原状
 
             ValueChanged?.Invoke(this, EventArgs.Empty);
         }

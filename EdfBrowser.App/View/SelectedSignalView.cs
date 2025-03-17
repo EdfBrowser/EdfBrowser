@@ -34,6 +34,8 @@ namespace EdfBrowser.App
                     {
                         notifyCollection.CollectionChanged -= OnCollectionChanged;
                     }
+
+                    _owner.DataSource = null;
                 }
 
                 private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -44,33 +46,29 @@ namespace EdfBrowser.App
                         return;
                     }
 
-                    if (_owner.DataSource is INotifyCollectionChanged collection)
+                    switch (e.Action)
                     {
-                        switch (e.Action)
-                        {
-                            case NotifyCollectionChangedAction.Add:
-                                foreach (object newItem in e.NewItems)
-                                    _owner.AddListViewItem(newItem, _owner.Items.Count + 1);
-                                break;
-                            case NotifyCollectionChangedAction.Remove:
-                                foreach (object oldItem in e.OldItems)
-                                    _owner.RemoveListViewItem(oldItem);
-                                break;
-                            case NotifyCollectionChangedAction.Reset:
-                            case NotifyCollectionChangedAction.Move:
-                                _owner.BindData(); // 重新绑定所有数据
-                                break;
-                            case NotifyCollectionChangedAction.Replace:
-                                //foreach (object newItem in e.NewItems)
-                                //    UpdateListViewItem(e.NewStartingIndex + , e.NewItems[0]); // 只更新修改的行
-                                break;
-                        }
+                        case NotifyCollectionChangedAction.Add:
+                            foreach (object newItem in e.NewItems)
+                                _owner.AddListViewItem(newItem);
+                            break;
+                        case NotifyCollectionChangedAction.Remove:
+                            foreach (object oldItem in e.OldItems)
+                                _owner.RemoveListViewItem(oldItem);
+                            break;
+                        case NotifyCollectionChangedAction.Reset:
+                        case NotifyCollectionChangedAction.Move:
+                            _owner.BindData(); // 重新绑定所有数据
+                            break;
+                        case NotifyCollectionChangedAction.Replace:
+                            //foreach (object newItem in e.NewItems)
+                            //    UpdateListViewItem(e.NewStartingIndex + , e.NewItems[0]); // 只更新修改的行
+                            break;
                     }
                 }
             }
 
             private readonly CollectionChangedManager _manager;
-            private int _rowIndex = 0;
             private object _dataSource;
 
             internal BindableListView()
@@ -132,7 +130,7 @@ namespace EdfBrowser.App
                 }
             }
 
-            private void AddListViewItem(object item, int rowIndex)
+            private void AddListViewItem(object item)
             {
                 if (Columns.Count == 0)
                     return;
@@ -145,7 +143,7 @@ namespace EdfBrowser.App
 
                     if (columnName == "Index")
                     {
-                        values[i] = rowIndex.ToString();
+                        values[i] = (Items.Count + 1).ToString();
                         continue;
                     }
 
@@ -166,10 +164,9 @@ namespace EdfBrowser.App
                 Items.Clear();
                 if (_dataSource is IEnumerable list)
                 {
-                    _rowIndex = 1;
                     foreach (object item in list)
                     {
-                        AddListViewItem(item, _rowIndex++);
+                        AddListViewItem(item);
                     }
                 }
 

@@ -1,6 +1,3 @@
-using EdfBrowser.EdfParser;
-using EdfBrowser.Model;
-using Plot.Skia;
 using Plot.WinForm;
 using System;
 using System.Collections.Generic;
@@ -10,79 +7,71 @@ namespace EdfBrowser.App
 {
     internal partial class PlotView : UserControl
     {
-        private readonly PlotViewModel _plotViewModel;
+        private readonly PlotViewModel _viewModel;
+        private readonly PlotViewService _viewService;
+
         private readonly FigureForm _figureForm;
         private readonly Dictionary<string, Action> _actions;
+
+        private readonly Timer _animationTimer;
+        private float _rotationAngle;
+        private readonly Panel _loadingPanel;
 
         internal PlotView(PlotViewModel plotViewModel)
         {
             InitializeComponent();
 
-            _actions = new Dictionary<string, Action>()
+            _viewModel = plotViewModel;
+            // TODO: disposed old figureForm
+            _figureForm = new FigureForm() { Dock = DockStyle.Fill };
+            _viewService = new PlotViewService(this, _figureForm);
+
+            InitializeBindings();
+            AttachEvents();
+
+            _viewService.ResetPlot(_viewModel.FigurePlot);
+        }
+
+
+        private void InitializeBindings()
+        {
+            _viewModel.PropertyChanged += (s, e) =>
             {
-                {nameof(PlotViewModel.EdfInfo), Reset },
-                {nameof(PlotViewModel.DataRecords), UpdatedPlot },
+                switch (e.PropertyName)
+                {
+                    case nameof(PlotViewModel.FigurePlot):
+                        this.SafeInvoke(() => _viewService.ResetPlot(_viewModel.FigurePlot));
+                        break;
+                    case nameof(PlotViewModel.IsLoading):
+                        this.SafeInvoke(() =>
+                        {
+                            if (_viewModel.IsLoading)
+                                _viewService.ShowLoading();
+                            else
+                                _viewService.HideLoading();
+                        });
+                        break;
+                    case nameof(PlotViewModel.NeedsRefresh):
+                        this.SafeInvoke(_viewService.RefreshPlot);
+                        break;
+                }
             };
-
-            _plotViewModel = plotViewModel;
-            _plotViewModel.PropertyChanged += OnPropertyChanged;
-
-            _figureForm = new FigureForm();
-            _figureForm.Dock = DockStyle.Fill;
-            _figureForm.Show();
-
-            Controls.Add(_figureForm);
         }
 
-        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void AttachEvents()
         {
-            _actions.TryGetValue(e.PropertyName, out Action action);
-            action.Invoke();
+
         }
+    }
 
-        private void Reset()
+    internal static class ControlExtensions
+    {
+        internal static void SafeInvoke(this Control control, Action action)
         {
-            EdfInfo info = _plotViewModel.EdfInfo;
-            uint ns = info._signalCount;
-
-            Figure figure = _figureForm.Figure;
-            AxisManager axisManager = figure.AxisManager;
-            SeriesManager seriesManager = figure.SeriesManager;
-
-            // reset
-            axisManager.Remove(Edge.Bottom);
-            IXAxis x = axisManager.AddNumericBottomAxis();
-            x.ScrollMode = AxisScrollMode.Scrolling;
-
-            axisManager.Remove(Edge.Left);
-
-            for (int i = 0; i < 8; i++)
-            {
-                IYAxis y = axisManager.AddNumericLeftAxis();
-
-                double samples = 1.0 / info._signals[i]._samples;
-                seriesManager.AddSignalSeries(x, y, samples);
-            }
-
-            _figureForm.Refresh();
-        }
-
-        private void UpdatedPlot()
-        {
-            Figure figure = _figureForm.Figure;
-            SeriesManager seriesManager = figure.SeriesManager;
-
-            for (int i = 0; i < seriesManager.Series.Count; i++)
-            {
-                DataRecord dataRecord = _plotViewModel.DataRecords[i];
-                var sig = (SignalSeries)seriesManager.Series[(int)dataRecord.Index];
-                var source = (SignalSourceDouble)sig.SignalSource;
-                source.AddRange(dataRecord.Buffer);
-                sig.X.ScrollPosition = source.Length * source.SampleInterval;
-            }
-
-            figure.RenderManager.Fit();
-            _figureForm.Refresh();
+            if (control.InvokeRequired)
+                control.Invoke(action);
+            else
+                action();
         }
     }
 }

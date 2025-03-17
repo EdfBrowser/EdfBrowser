@@ -16,7 +16,11 @@ namespace EdfBrowser.EdfParser
             var transform = _signalTransforms[dataRecord.Index];
             for (int i = 0; i < dataRecord.Length; i++)
             {
-                dataRecord.Buffer[i] = transform.Unit * (dataRecord.Buffer[i] + transform.Offset);
+                double raw = dataRecord.Buffer[i];
+                raw = Math.Min(raw, transform.DMax);
+                raw = Math.Max(raw, transform.DMin);
+                
+                dataRecord.Buffer[i] = transform.Unit * (raw + transform.Offset);
                 // buf[i] = (raw - dataInfo.DMin) * dataInfo.Unit + dataInfo.PMin;
             }
         }
