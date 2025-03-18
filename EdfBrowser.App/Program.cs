@@ -56,7 +56,9 @@ namespace EdfBrowser.App
         private NavigationService<SignalListViewModel> CreateSignalListNavigationService()
         {
             return new NavigationService<SignalListViewModel>(_navigationStore,
-                () => new SignalListViewModel(_edfStore, CreateEdfPlotNavigationService()));
+                () => new SignalListViewModel(_edfStore, 
+                CreateEdfPlotNavigationService(),
+                CreateFileViewNavigationService()));
         }
 
         private NavigationService<EdfPlotViewModel> CreateEdfPlotNavigationService()

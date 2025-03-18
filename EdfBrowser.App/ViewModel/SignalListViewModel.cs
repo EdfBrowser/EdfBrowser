@@ -9,18 +9,22 @@ namespace EdfBrowser.App
     internal class SignalListViewModel : BaseViewModel
     {
         private readonly EdfStore _edfStore;
-        private readonly NavigationService<EdfPlotViewModel> _navigationService;
+        private readonly NavigationService<EdfPlotViewModel> _navigationEdfPlotService;
+        private readonly NavigationService<FileViewModel> _navigationFileService;
 
         internal SignalListViewModel(EdfStore edfStore,
-            NavigationService<EdfPlotViewModel> navigationService)
+            NavigationService<EdfPlotViewModel> navigationEdfPlotService,
+            NavigationService<FileViewModel> navigationFileService)
         {
             _edfStore = edfStore;
             _edfStore.EdfFilePathChanged += OnEdfFilePathChanged;
-            _navigationService = navigationService;
+            _navigationEdfPlotService = navigationEdfPlotService;
+            _navigationFileService = navigationFileService;
 
             AddSignalCommand = new RelayCommand(AddSignal);
             RemoveSignalCommand = new RelayCommand(RemoveSignal);
             CompletedCommand = new RelayCommand(Completed);
+            BackwardCommand = new RelayCommand(Backward);
         }
 
         internal ObservableCollection<SignalItem> SignalItems => _edfStore.SignalItems;
@@ -30,6 +34,7 @@ namespace EdfBrowser.App
         internal ICommand AddSignalCommand { get; }
         internal ICommand RemoveSignalCommand { get; }
         internal ICommand CompletedCommand { get; }
+        internal ICommand BackwardCommand { get; }
 
         protected override void Dispose(bool disposing)
         {
@@ -78,7 +83,12 @@ namespace EdfBrowser.App
 
         private void Completed(object parameter)
         {
-            _navigationService.Navigate();
+            _navigationEdfPlotService.Navigate();
+        }
+
+        private void Backward(object parameter)
+        {
+           _navigationFileService.Navigate();
         }
     }
 }

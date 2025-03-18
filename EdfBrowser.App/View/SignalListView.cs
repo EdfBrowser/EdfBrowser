@@ -184,9 +184,10 @@ namespace EdfBrowser.App
         private readonly Button _addButton;
         private readonly Button _removeButton;
 
-        private readonly Panel _buttonPanel;
+        private readonly FlowLayoutPanel _buttonPanel;
 
         private readonly Button _completeButton;
+        private readonly Button _backwardButton;
 
         internal SignalListView(SignalListViewModel selectedSignalViewModel)
         {
@@ -194,10 +195,12 @@ namespace EdfBrowser.App
 
             _selectedSignalViewModel = selectedSignalViewModel;
 
-            _mainLayout = new TableLayoutPanel();
-            _mainLayout.RowCount = 2;
-            _mainLayout.ColumnCount = 3;
-            _mainLayout.Dock = DockStyle.Fill;
+            _mainLayout = new TableLayoutPanel
+            {
+                RowCount = 2,
+                ColumnCount = 3,
+                Dock = DockStyle.Fill
+            };
 
             _mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             _mainLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -206,57 +209,80 @@ namespace EdfBrowser.App
             _mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             _mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 
-            _operatorLayout = new FlowLayoutPanel();
-            _operatorLayout.FlowDirection = FlowDirection.TopDown;
-            _operatorLayout.WrapContents = false;
-            _operatorLayout.AutoSize = true;
-            //_operatorLayout.Padding = new Padding(0, _mainLayout.Height / 2, 0, _mainLayout.Height / 2);
-            _operatorLayout.Dock = DockStyle.Fill;
+            _operatorLayout = new FlowLayoutPanel
+            {
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
+                AutoSize = true,
+                //_operatorLayout.Padding = new Padding(0, _mainLayout.Height / 2, 0, _mainLayout.Height / 2);
+                Dock = DockStyle.Fill
+            };
 
-            _allListView = new BindableListView();
-            _allListView.Dock = DockStyle.Fill;
-            _allListView.View = View.Details;
-            _allListView.FullRowSelect = true;
-            _allListView.GridLines = true;
+            _allListView = new BindableListView
+            {
+                Dock = DockStyle.Fill,
+                View = View.Details,
+                FullRowSelect = true,
+                GridLines = true
+            };
             _allListView.Columns.Clear();
             _allListView.Columns.Add("Index", 50, HorizontalAlignment.Left);
             _allListView.Columns.Add("Label", 200, HorizontalAlignment.Left);
             _allListView.Columns.Add("SampleRate", 200, HorizontalAlignment.Left);
             _allListView.DataSource = _selectedSignalViewModel.SignalItems;
 
-            _selectedListView = new BindableListView();
-            _selectedListView.Dock = DockStyle.Fill;
-            _selectedListView.View = View.Details;
-            _selectedListView.FullRowSelect = true;
-            _selectedListView.GridLines = true;
+            _selectedListView = new BindableListView
+            {
+                Dock = DockStyle.Fill,
+                View = View.Details,
+                FullRowSelect = true,
+                GridLines = true
+            };
             _selectedListView.Columns.Clear();
             _selectedListView.Columns.Add("Index", 50, HorizontalAlignment.Left);
             _selectedListView.Columns.Add("Label", 200, HorizontalAlignment.Left);
             _selectedListView.Columns.Add("SampleRate", 200, HorizontalAlignment.Left);
             _selectedListView.DataSource = _selectedSignalViewModel.SelectedSignalItems;
 
-            _addButton = new Button();
-            _addButton.AutoSize = true;
-            _addButton.Text = "Add->";
+            _addButton = new Button
+            {
+                AutoSize = true,
+                Text = "Add->"
+            };
             _addButton.Click += OnAddSignal;
-            _removeButton = new Button();
-            _removeButton.AutoSize = true;
-            _removeButton.Text = "<-Remove";
+            _removeButton = new Button
+            {
+                AutoSize = true,
+                Text = "<-Remove"
+            };
             _removeButton.Click += OnRemoveSignal;
 
             _operatorLayout.Controls.Add(_addButton);
             _operatorLayout.Controls.Add(_removeButton);
 
 
-            _buttonPanel = new Panel();
-            _buttonPanel.AutoSize = true;
-            _buttonPanel.Dock = DockStyle.Fill;
+            _buttonPanel = new FlowLayoutPanel
+            {
+                AutoSize = true,
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.LeftToRight,
+            };
 
-            _completeButton = new Button();
-            _completeButton.AutoSize = true;
-            _completeButton.Text = "Complete";
+            _completeButton = new Button
+            {
+                AutoSize = true,
+                Text = "Complete"
+            };
             _completeButton.Click += OnCompleted;
 
+            _backwardButton = new Button
+            {
+                AutoSize = true,
+                Text = "Backward"
+            };
+            _backwardButton.Click += OnBackward;
+
+            _buttonPanel.Controls.Add(_backwardButton);
             _buttonPanel.Controls.Add(_completeButton);
 
 
@@ -268,6 +294,7 @@ namespace EdfBrowser.App
 
             Controls.Add(_mainLayout);
         }
+
 
         private void OnAddSignal(object sender, EventArgs e)
         {
@@ -305,6 +332,11 @@ namespace EdfBrowser.App
         private void OnCompleted(object sender, EventArgs e)
         {
             _selectedSignalViewModel.CompletedCommand.Execute(null);
+        }
+
+        private void OnBackward(object sender, EventArgs e)
+        {
+            _selectedSignalViewModel.BackwardCommand.Execute(null);
         }
     }
 }
