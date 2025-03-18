@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace EdfBrowser.App
 {
     internal class EdfPlotViewModel : BaseViewModel

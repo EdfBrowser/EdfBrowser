@@ -10,7 +10,7 @@ namespace EdfBrowser.Model
             Index = index;
         }
 
-        public uint SampleRate { get;}
+        public uint SampleRate { get; }
         public uint Index { get; }
         public uint StartRecord { get; set; }
         public uint ReadCount { get; set; }

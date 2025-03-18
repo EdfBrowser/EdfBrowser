@@ -1,4 +1,3 @@
-using EdfBrowser.Services;
 
 namespace EdfBrowser.App
 {
@@ -6,14 +5,13 @@ namespace EdfBrowser.App
     {
         private readonly NavigationStore _navigationStore;
 
-        internal MainViewModel(IMenuService menuService, EdfStore edfStore,
-            NavigationService<SignalListViewModel> navigationService,
-            NavigationStore navigationStore)
+        internal MainViewModel(NavigationStore navigationStore)
         {
-            MenuViewModel = MenuViewModel.LoadMenus(menuService, edfStore, navigationService);
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
         }
+
+        internal BaseViewModel CurrentViewModel => _navigationStore.CurrentViewModel;
 
         private void OnCurrentViewModelChanged()
         {
@@ -24,8 +22,5 @@ namespace EdfBrowser.App
         {
             _navigationStore.CurrentViewModelChanged -= OnCurrentViewModelChanged;
         }
-
-        internal MenuViewModel MenuViewModel { get; }
-        internal BaseViewModel CurrentViewModel => _navigationStore.CurrentViewModel;
     }
 }

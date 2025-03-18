@@ -22,10 +22,11 @@ namespace EdfBrowser.App
 
             _navigationStore = new NavigationStore();
 
-            _mainViewModel = new MainViewModel(_menuService, _edfStore,
-                CreateSignalListNavigationService(),
-                _navigationStore);
+            _mainViewModel = new MainViewModel(_navigationStore);
             _mainView = new MainView(_mainViewModel);
+
+            var navigation = CreateFileViewNavigationService();
+            navigation.Navigate();
         }
 
         [STAThread]
@@ -44,6 +45,12 @@ namespace EdfBrowser.App
         private void Run()
         {
             Application.Run(_mainView);
+        }
+
+        private NavigationService<FileViewModel> CreateFileViewNavigationService()
+        {
+            return new NavigationService<FileViewModel>(_navigationStore,
+                () => new FileViewModel(_edfStore, CreateSignalListNavigationService()));
         }
 
         private NavigationService<SignalListViewModel> CreateSignalListNavigationService()

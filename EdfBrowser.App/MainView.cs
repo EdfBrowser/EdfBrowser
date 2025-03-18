@@ -6,7 +6,6 @@ namespace EdfBrowser.App
     {
         private readonly MainViewModel _mainViewModel;
 
-        private readonly MenuView _menuView;
         private readonly Panel _contentPanel;
 
         internal MainView(MainViewModel mainViewModel)
@@ -16,18 +15,12 @@ namespace EdfBrowser.App
             _mainViewModel = mainViewModel;
             _mainViewModel.PropertyChanged += OnPropertyChanged;
 
-            _menuView = new MenuView(_mainViewModel.MenuViewModel);
-            _menuView.Height = 30;
-            _menuView.Dock = DockStyle.Top;
-            _menuView.Show();
-
-
-            _contentPanel = new Panel();
-            _contentPanel.Dock = DockStyle.Fill;
-            _contentPanel.Show();
+            _contentPanel = new Panel
+            {
+                Dock = DockStyle.Fill
+            };
 
             Controls.Add(_contentPanel);
-            Controls.Add(_menuView);
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -36,16 +29,28 @@ namespace EdfBrowser.App
             {
                 _contentPanel.Controls.Clear();
 
-                if (_mainViewModel.CurrentViewModel is SignalListViewModel signalListViewModel)
+                if (_mainViewModel.CurrentViewModel is FileViewModel fileViewModel)
                 {
-                    SignalListView signalListView = new SignalListView(signalListViewModel);
-                    signalListView.Dock = DockStyle.Fill;
+                    FileView fileView = new FileView(fileViewModel)
+                    {
+                        Dock = DockStyle.Fill
+                    };
+                    _contentPanel.Controls.Add(fileView);
+                }
+                else if (_mainViewModel.CurrentViewModel is SignalListViewModel signalListViewModel)
+                {
+                    SignalListView signalListView = new SignalListView(signalListViewModel)
+                    {
+                        Dock = DockStyle.Fill
+                    };
                     _contentPanel.Controls.Add(signalListView);
                 }
                 else if (_mainViewModel.CurrentViewModel is EdfPlotViewModel edfPlotViewModel)
                 {
-                    EdfPlotView edfPlotView = new EdfPlotView(edfPlotViewModel);
-                    edfPlotView.Dock = DockStyle.Fill;
+                    EdfPlotView edfPlotView = new EdfPlotView(edfPlotViewModel)
+                    {
+                        Dock = DockStyle.Fill
+                    };
                     _contentPanel.Controls.Add(edfPlotView);
                 }
             }

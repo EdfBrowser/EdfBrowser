@@ -14,7 +14,7 @@ namespace EdfBrowser.App
         private readonly Dictionary<string, Action> _actions;
 
         private readonly Timer _animationTimer;
-        private float _rotationAngle;
+        private readonly float _rotationAngle;
         private readonly Panel _loadingPanel;
 
         internal PlotView(PlotViewModel plotViewModel)

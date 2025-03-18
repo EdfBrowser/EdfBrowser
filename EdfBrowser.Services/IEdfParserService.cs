@@ -1,6 +1,6 @@
 using EdfBrowser.EdfParser;
-using System.Threading.Tasks;
 using EdfBrowser.Model;
+using System.Threading.Tasks;
 
 namespace EdfBrowser.Services
 {

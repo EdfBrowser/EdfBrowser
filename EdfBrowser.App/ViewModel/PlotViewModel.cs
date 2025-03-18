@@ -1,9 +1,5 @@
-using EdfBrowser.EdfParser;
 using EdfBrowser.Model;
 using Plot.Skia;
-using Plot.WinForm;
-using System;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -15,6 +11,8 @@ namespace EdfBrowser.App
 
         private Figure _figurePlot;
         private bool _isLoading;
+
+        private string[] _mappingSignal;
 
         internal PlotViewModel(EdfStore edfStore)
         {
@@ -95,12 +93,17 @@ namespace EdfBrowser.App
 
             axisManager.Remove(Edge.Left);
 
+            _mappingSignal = new string[_edfStore.SelectedSignalItems.Count];
+            int i = 0;
+
             foreach (SignalItem item in _edfStore.SelectedSignalItems)
             {
                 IYAxis y = axisManager.AddNumericLeftAxis();
 
                 double samples = 1.0 / item.SampleRate;
                 seriesManager.AddSignalSeries(x, y, samples);
+
+                _mappingSignal[i++] = item.Label;
             }
         }
 
@@ -109,10 +112,11 @@ namespace EdfBrowser.App
             SeriesManager seriesManager = FigurePlot.SeriesManager;
             AxisManager axisManager = FigurePlot.AxisManager;
 
-            for (int i = 0; i < seriesManager.Series.Count; i++)
+            int i = 0;
+            foreach (SignalSeries sig in seriesManager.Series)
             {
-                DataRecord dataRecord = _edfStore.DataRecords[i];
-                var sig = (SignalSeries)seriesManager.Series[(int)dataRecord.Index];
+                string label = _mappingSignal[i++];
+                DataRecord dataRecord = _edfStore.DataRecords[label];
                 var source = (SignalSourceDouble)sig.SignalSource;
 
                 if (forward)

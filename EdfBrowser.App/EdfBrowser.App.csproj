@@ -13,4 +13,10 @@
       <ProjectReference Include="..\external\Plot\Plot.WinForm\Plot.WinForm.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="View\FileView.cs">
+        <SubType>UserControl</SubType>
+      </Compile>
+    </ItemGroup>
+
 </Project>

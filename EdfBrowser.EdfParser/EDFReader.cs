@@ -1,6 +1,6 @@
+using EdfBrowser.Model;
 using System;
 using System.Runtime.InteropServices;
-using EdfBrowser.Model;
 
 namespace EdfBrowser.EdfParser
 {
@@ -19,7 +19,7 @@ namespace EdfBrowser.EdfParser
                 double raw = dataRecord.Buffer[i];
                 raw = Math.Min(raw, transform.DMax);
                 raw = Math.Max(raw, transform.DMin);
-                
+
                 dataRecord.Buffer[i] = transform.Unit * (raw + transform.Offset);
                 // buf[i] = (raw - dataInfo.DMin) * dataInfo.Unit + dataInfo.PMin;
             }
