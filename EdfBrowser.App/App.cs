@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -16,6 +17,14 @@ namespace EdfBrowser.App
             _host.Start();
 
             IServiceProvider provider = _host.Services;
+
+#if DEBUG
+            IAppDbContextFactory factory = provider.GetService<IAppDbContextFactory>();
+            using (AppDbContext context = factory.CreateDbContext())
+            {
+                context.Database.Migrate();
+            }
+#endif
 
             NavigationService<FileViewModel> navigationService
                 = provider.GetRequiredService<NavigationService<FileViewModel>>();
@@ -38,6 +47,8 @@ namespace EdfBrowser.App
         private static IHostBuilder CreateHostBuilder()
         {
             return Host.CreateDefaultBuilder()
+                .AddConfiguration()
+                .AddDbContext()
                 .AddStores()
                 .AddServices()
                 .AddViewModels()
