@@ -3,7 +3,7 @@ using System;
 namespace EdfBrowser.Model
 {
     // 数据模型
-    public class FileItem
+    public class FileItem : DomainObject
     {
         public FileItem(string title, string subtitle, DateTime time)
         {

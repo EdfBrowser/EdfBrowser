@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net4.8</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
+        <Platforms>x64;x86</Platforms>
     </PropertyGroup>
 
 </Project>
