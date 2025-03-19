@@ -173,7 +173,7 @@ namespace EdfBrowser.App
             }
         }
 
-        private readonly SignalListViewModel _selectedSignalViewModel;
+        private readonly SignalListViewModel _signalListViewModel;
 
         private readonly TableLayoutPanel _mainLayout;
         private readonly FlowLayoutPanel _operatorLayout;
@@ -189,11 +189,11 @@ namespace EdfBrowser.App
         private readonly Button _completeButton;
         private readonly Button _backwardButton;
 
-        internal SignalListView(SignalListViewModel selectedSignalViewModel)
+        public SignalListView(SignalListViewModel signalListViewModel)
         {
             InitializeComponent();
 
-            _selectedSignalViewModel = selectedSignalViewModel;
+            _signalListViewModel = signalListViewModel;
 
             _mainLayout = new TableLayoutPanel
             {
@@ -229,7 +229,7 @@ namespace EdfBrowser.App
             _allListView.Columns.Add("Index", 50, HorizontalAlignment.Left);
             _allListView.Columns.Add("Label", 200, HorizontalAlignment.Left);
             _allListView.Columns.Add("SampleRate", 200, HorizontalAlignment.Left);
-            _allListView.DataSource = _selectedSignalViewModel.SignalItems;
+            _allListView.DataSource = _signalListViewModel.SignalItems;
 
             _selectedListView = new BindableListView
             {
@@ -242,7 +242,7 @@ namespace EdfBrowser.App
             _selectedListView.Columns.Add("Index", 50, HorizontalAlignment.Left);
             _selectedListView.Columns.Add("Label", 200, HorizontalAlignment.Left);
             _selectedListView.Columns.Add("SampleRate", 200, HorizontalAlignment.Left);
-            _selectedListView.DataSource = _selectedSignalViewModel.SelectedSignalItems;
+            _selectedListView.DataSource = _signalListViewModel.SelectedSignalItems;
 
             _addButton = new Button
             {
@@ -308,7 +308,7 @@ namespace EdfBrowser.App
             if (selectedItems.Any())
             {
                 // 一次性将所有选中的项添加到视图模型
-                _selectedSignalViewModel.AddSignalCommand.Execute(selectedItems);
+                _signalListViewModel.AddSignalCommand.Execute(selectedItems);
             }
         }
 
@@ -324,19 +324,19 @@ namespace EdfBrowser.App
             if (selectedItems.Any())
             {
                 // 一次性将所有选中的项添加到视图模型
-                _selectedSignalViewModel.RemoveSignalCommand.Execute(selectedItems);
+                _signalListViewModel.RemoveSignalCommand.Execute(selectedItems);
             }
         }
 
 
         private void OnCompleted(object sender, EventArgs e)
         {
-            _selectedSignalViewModel.CompletedCommand.Execute(null);
+            _signalListViewModel.CompletedCommand.Execute(null);
         }
 
         private void OnBackward(object sender, EventArgs e)
         {
-            _selectedSignalViewModel.BackwardCommand.Execute(null);
+            _signalListViewModel.BackwardCommand.Execute(null);
         }
     }
 }

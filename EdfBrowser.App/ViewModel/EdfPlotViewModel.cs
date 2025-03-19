@@ -4,12 +4,13 @@ namespace EdfBrowser.App
     {
         private readonly EdfStore _edfStore;
 
-        internal EdfPlotViewModel(EdfStore edfStore)
+        public EdfPlotViewModel(EdfStore edfStore, PlotViewModel plotViewModel,
+            TimelineViewModel timelineViewModel)
         {
             _edfStore = edfStore;
 
-            PlotViewModel = new PlotViewModel(edfStore);
-            TimelineViewModel = new TimelineViewModel();
+            PlotViewModel = plotViewModel;
+            TimelineViewModel = timelineViewModel;
             TimelineViewModel.TimelineValueChanged += OnTimelineValueChanged;
 
             double totalDuration = _edfStore.EdfInfo._recordDuration * _edfStore.EdfInfo._recordCount;

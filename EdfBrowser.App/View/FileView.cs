@@ -159,7 +159,7 @@ namespace EdfBrowser.App
         private ICommand _openFileCommand;
         private ICommand _executeActionCommand;
 
-        internal FileView(FileViewModel fileViewModel)
+        public FileView(FileViewModel fileViewModel)
         {
             InitializeComponent();
 

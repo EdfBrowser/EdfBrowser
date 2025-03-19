@@ -14,7 +14,7 @@ namespace EdfBrowser.App
 
         private string[] _mappingSignal;
 
-        internal PlotViewModel(EdfStore edfStore)
+        public PlotViewModel(EdfStore edfStore)
         {
             _edfStore = edfStore;
             _isLoading = false;

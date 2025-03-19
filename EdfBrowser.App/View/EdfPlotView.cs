@@ -8,7 +8,7 @@ namespace EdfBrowser.App
         private readonly PlotView _plotView;
         private readonly TimelineView _timelineView;
 
-        internal EdfPlotView(EdfPlotViewModel edfPlotViewModel)
+        public EdfPlotView(EdfPlotViewModel edfPlotViewModel)
         {
             InitializeComponent();
 

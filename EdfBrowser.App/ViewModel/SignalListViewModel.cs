@@ -12,7 +12,7 @@ namespace EdfBrowser.App
         private readonly NavigationService<EdfPlotViewModel> _navigationEdfPlotService;
         private readonly NavigationService<FileViewModel> _navigationFileService;
 
-        internal SignalListViewModel(EdfStore edfStore,
+        public SignalListViewModel(EdfStore edfStore,
             NavigationService<EdfPlotViewModel> navigationEdfPlotService,
             NavigationService<FileViewModel> navigationFileService)
         {
@@ -88,7 +88,7 @@ namespace EdfBrowser.App
 
         private void Backward(object parameter)
         {
-           _navigationFileService.Navigate();
+            _navigationFileService.Navigate();
         }
     }
 }

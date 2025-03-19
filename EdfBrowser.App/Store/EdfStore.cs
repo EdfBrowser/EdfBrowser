@@ -13,7 +13,7 @@ namespace EdfBrowser.App
         private readonly IEdfParserService _edfParserService;
         private string _filePath = null;
 
-        internal EdfStore(IEdfParserService edfParserService)
+        public EdfStore(IEdfParserService edfParserService)
         {
             _edfParserService = edfParserService;
 

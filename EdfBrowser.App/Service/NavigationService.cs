@@ -7,7 +7,7 @@ namespace EdfBrowser.App
         private readonly NavigationStore _navigationStore;
         private readonly Func<TViewModel> _createViewModel;
 
-        internal NavigationService(NavigationStore navigationStore,
+        public NavigationService(NavigationStore navigationStore,
             Func<TViewModel> createViewModel)
         {
             _navigationStore = navigationStore;

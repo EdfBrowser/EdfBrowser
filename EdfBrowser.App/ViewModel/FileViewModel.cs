@@ -14,7 +14,7 @@ namespace EdfBrowser.App
         private List<FileItem> _recentFiles;
         private List<ActionItem> _actionItems;
 
-        internal FileViewModel(EdfStore edfStore,
+        public FileViewModel(EdfStore edfStore,
             NavigationService<SignalListViewModel> navigationService)
         {
             _edfStore = edfStore;

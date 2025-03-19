@@ -5,7 +5,7 @@ namespace EdfBrowser.App
     {
         private readonly NavigationStore _navigationStore;
 
-        internal MainViewModel(NavigationStore navigationStore)
+        public MainViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
