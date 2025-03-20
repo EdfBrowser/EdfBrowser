@@ -11,15 +11,12 @@ namespace EdfBrowser.App
             {
                 services.AddSingleton<MainView>();
 
-                services.AddSingleton(s =>
-                    new FileView(s.GetRequiredService<FileViewModel>())
-                    { Dock = System.Windows.Forms.DockStyle.Fill });
-                services.AddSingleton(s =>
-                    new EdfPlotView(s.GetRequiredService<EdfPlotViewModel>())
-                    { Dock = System.Windows.Forms.DockStyle.Fill });
-                services.AddSingleton(s =>
-                    new SignalListView(s.GetRequiredService<SignalListViewModel>())
-                    { Dock = System.Windows.Forms.DockStyle.Fill });
+                services.AddTransient<FileView>();
+                services.AddTransient<EdfPlotView>();
+                services.AddTransient<SignalListView>();
+
+                services.AddSingleton<PlotView>();
+                services.AddSingleton<TimelineView>();
             });
         }
     }

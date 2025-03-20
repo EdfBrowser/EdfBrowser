@@ -9,15 +9,17 @@ namespace EdfBrowser.App
         private readonly ModernTimelineControl _timelineControl;
 
         // TODO: dispose event
-        internal TimelineView(TimelineViewModel timelineViewModel)
+        public TimelineView(TimelineViewModel timelineViewModel)
         {
             InitializeComponent();
 
             _timelineViewModel = timelineViewModel;
             _timelineViewModel.PropertyChanged += OnPropertyChanged;
 
-            _timelineControl = new ModernTimelineControl();
-            _timelineControl.Dock = DockStyle.Fill;
+            _timelineControl = new ModernTimelineControl
+            {
+                Dock = DockStyle.Fill
+            };
             _timelineControl.ValueChanged += ValueChanged;
 
             Controls.Add(_timelineControl);

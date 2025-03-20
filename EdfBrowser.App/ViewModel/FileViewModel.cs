@@ -1,6 +1,8 @@
 using EdfBrowser.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -10,32 +12,34 @@ namespace EdfBrowser.App
     {
         private readonly EdfStore _edfStore;
         private readonly NavigationService<SignalListViewModel> _navigationService;
-
-        private List<FileItem> _recentFiles;
-        private List<ActionItem> _actionItems;
+        private readonly GenericDataService<FileItem> _fileItemService;
+        private readonly GenericDataService<ActionItem> _actionItemService;
+        private IEnumerable<FileItem> _recentFiles;
+        private IEnumerable<ActionItem> _actionItems;
 
         public FileViewModel(EdfStore edfStore,
-            NavigationService<SignalListViewModel> navigationService)
+            NavigationService<SignalListViewModel> navigationService,
+            GenericDataService<FileItem> fileItemService,
+            GenericDataService<ActionItem> actionItemService)
         {
             _edfStore = edfStore;
             _navigationService = navigationService;
+            _fileItemService = fileItemService;
+            _actionItemService = actionItemService;
 
-            RecentFiles = new List<FileItem>
-            {
-                new FileItem("X.edf", "D:\\code\\", DateTime.Now),
-            };
 
-            ActionItems = new List<ActionItem>
-            {
-                new ActionItem("Open File", "Open local edf files")
-            };
+            OpenFileCommand = new AsyncRelayCommand(OpenFile);
+            ExecuteActionCommand = new AsyncRelayCommand(ExecuteAction);
+            LoadFileItemCommand = new AsyncRelayCommand(LoadFileItems);
+            LoadActionItemCommand = new AsyncRelayCommand(LoadActionItems);
 
-            OpenFileCommand = new RelayCommand(OpenFile);
-            ExecuteActionCommand = new RelayCommand(ExecuteAction);
+
+            LoadFileItemCommand.Execute(null);
+            LoadActionItemCommand.Execute(null);
         }
 
 
-        public List<FileItem> RecentFiles
+        internal IEnumerable<FileItem> RecentFiles
         {
             get { return _recentFiles; }
             set
@@ -48,7 +52,7 @@ namespace EdfBrowser.App
             }
         }
 
-        public List<ActionItem> ActionItems
+        internal IEnumerable<ActionItem> ActionItems
         {
             get { return _actionItems; }
             set
@@ -61,29 +65,52 @@ namespace EdfBrowser.App
             }
         }
 
-        public ICommand OpenFileCommand { get; }
-        public ICommand ExecuteActionCommand { get; }
+        internal ICommand OpenFileCommand { get; }
+        internal ICommand ExecuteActionCommand { get; }
+        internal ICommand LoadFileItemCommand { get; }
+        internal ICommand LoadActionItemCommand { get; }
 
         #region Command 
 
-        private void OpenFile(object parameter)
+        private async Task LoadFileItems(object parameter)
+        {
+            RecentFiles = await _fileItemService.GetAll();
+        }
+
+        private async Task LoadActionItems(object arg)
+        {
+            ActionItems = await _actionItemService.GetAll();
+        }
+
+        private async Task OpenFile(object parameter)
         {
             if (parameter is FileItem fileItem)
             {
-                _navigationService.Navigate();
+                fileItem.Time = DateTime.Now;
+
+                await _fileItemService.Update(fileItem);
+
                 _edfStore.SetFilePath(fileItem.Path);
+                _navigationService.Navigate();
             }
         }
 
-        private void ExecuteAction(object parameter)
+        private async Task ExecuteAction(object parameter)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "EDF files (*.edf)|*.edf";
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _navigationService.Navigate();
+                    string path = openFileDialog.FileName;
+                    string subTitle = System.IO.Path.GetDirectoryName(path);
+                    string title = System.IO.Path.GetFileName(path);
+                    FileItem fileItem = new FileItem(title, subTitle, DateTime.Now);
+
+                    await _fileItemService.Create(fileItem);
+
                     _edfStore.SetFilePath(openFileDialog.FileName);
+                    _navigationService.Navigate();
                 }
             }
         }

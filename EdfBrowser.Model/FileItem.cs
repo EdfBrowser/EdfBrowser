@@ -14,7 +14,7 @@ namespace EdfBrowser.Model
 
         public string Title { get; set; }
         public string Subtitle { get; set; }
-        public string Path => Subtitle + Title;
+        public string Path => System.IO.Path.Combine(Subtitle, Title);
         public DateTime Time { get; set; }
     }
 }

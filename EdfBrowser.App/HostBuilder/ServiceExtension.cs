@@ -1,3 +1,4 @@
+using EdfBrowser.Model;
 using EdfBrowser.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +12,8 @@ namespace EdfBrowser.App
             return host.ConfigureServices(services =>
             {
                 services.AddSingleton<IEdfParserService, EdfParserService>();
+                services.AddSingleton<GenericDataService<FileItem>>();
+                services.AddSingleton<GenericDataService<ActionItem>>();
             });
         }
     }

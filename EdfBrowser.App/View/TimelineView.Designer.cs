@@ -1,4 +1,4 @@
-﻿namespace EdfBrowser.App
+namespace EdfBrowser.App
 {
     partial class TimelineView
     {
@@ -16,6 +16,7 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
+                _timelineViewModel.PropertyChanged -= OnPropertyChanged;
             }
             base.Dispose(disposing);
         }

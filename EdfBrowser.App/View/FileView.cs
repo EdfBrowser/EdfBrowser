@@ -1,6 +1,8 @@
 using EdfBrowser.Model;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -154,8 +156,8 @@ namespace EdfBrowser.App
         private readonly FileViewModel _fileViewModel;
         private readonly RecentFilesPanel _recentFilesPanel;
         private readonly GetStartedPanel _getStartedPanel;
-        private List<FileItem> _recentFiles;
-        private List<ActionItem> _actionItems;
+        private IList<FileItem> _recentFiles;
+        private IList<ActionItem> _actionItems;
         private ICommand _openFileCommand;
         private ICommand _executeActionCommand;
 
@@ -166,8 +168,8 @@ namespace EdfBrowser.App
             _fileViewModel = fileViewModel;
             _fileViewModel.PropertyChanged += OnPropertyChanged;
 
-            _recentFiles = _fileViewModel.RecentFiles;
-            _actionItems = _fileViewModel.ActionItems;
+            _recentFiles = _fileViewModel.RecentFiles.ToList();
+            _actionItems = _fileViewModel.ActionItems.ToList();
             _openFileCommand = _fileViewModel.OpenFileCommand;
             _executeActionCommand = _fileViewModel.ExecuteActionCommand;
 
@@ -192,12 +194,13 @@ namespace EdfBrowser.App
         {
             if (e.PropertyName == nameof(_fileViewModel.RecentFiles))
             {
-                _recentFiles = _fileViewModel.RecentFiles;
+                _recentFiles = _fileViewModel.RecentFiles.ToList();
                 _recentFilesPanel.Invalidate();
             }
             else if (e.PropertyName == nameof(_fileViewModel.ActionItems))
             {
-                _actionItems = _fileViewModel.ActionItems;
+                _actionItems = _fileViewModel.ActionItems.ToList();
+                _getStartedPanel.Invalidate();
             }
             else if (e.PropertyName == nameof(_fileViewModel.OpenFileCommand))
             {

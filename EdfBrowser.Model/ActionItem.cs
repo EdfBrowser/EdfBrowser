@@ -1,6 +1,6 @@
 namespace EdfBrowser.Model
 {
-    public class ActionItem
+    public class ActionItem : DomainObject
     {
         public ActionItem(string title, string description)
         {

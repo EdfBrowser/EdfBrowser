@@ -1,3 +1,4 @@
+using EdfBrowser.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -19,8 +20,9 @@ namespace EdfBrowser.App
                 services.AddTransient<EdfPlotViewModel>();
                 services.AddTransient<SignalListViewModel>();
                 services.AddTransient<FileViewModel>();
-                services.AddTransient<PlotViewModel>();
-                services.AddTransient<TimelineViewModel>();
+
+                services.AddSingleton<PlotViewModel>();
+                services.AddSingleton<TimelineViewModel>();
             });
         }
 

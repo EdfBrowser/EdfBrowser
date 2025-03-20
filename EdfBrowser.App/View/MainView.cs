@@ -47,6 +47,11 @@ namespace EdfBrowser.App
 
         private void SwitchControl()
         {
+            if (_contentPanel.Controls.Count > 0 && _contentPanel.Controls[0] is IDisposable oldView)
+            {
+                //oldView.Dispose();
+            }
+
             _contentPanel.Controls.Clear();
 
             Type currentViewModelType = _mainViewModel.CurrentViewModel?.GetType();
@@ -54,10 +59,10 @@ namespace EdfBrowser.App
             if (currentViewModelType != null && _viewModelToViewMapping.ContainsKey(currentViewModelType))
             {
                 Type viewType = _viewModelToViewMapping[currentViewModelType];
-                UserControl view = _provider.GetRequiredService(viewType) as UserControl;
 
-                if (view != null)
+                if (_provider.GetRequiredService(viewType) is UserControl view)
                 {
+                    view.Dock = DockStyle.Fill;
                     _contentPanel.Controls.Add(view);
                 }
             }

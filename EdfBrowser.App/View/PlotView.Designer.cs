@@ -16,6 +16,7 @@ namespace EdfBrowser.App
             if (disposing && (components != null))
             {
                 components.Dispose();
+                _viewModel.PropertyChanged -= OnPropertyChanged;
             }
             base.Dispose(disposing);
         }

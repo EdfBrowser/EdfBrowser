@@ -17,7 +17,7 @@ namespace EdfBrowser.App
         private readonly float _rotationAngle;
         private readonly Panel _loadingPanel;
 
-        internal PlotView(PlotViewModel plotViewModel)
+        public PlotView(PlotViewModel plotViewModel)
         {
             InitializeComponent();
 
@@ -26,36 +26,33 @@ namespace EdfBrowser.App
             _figureForm = new FigureForm() { Dock = DockStyle.Fill };
             _viewService = new PlotViewService(this, _figureForm);
 
-            InitializeBindings();
+            _viewModel.PropertyChanged += OnPropertyChanged;
             AttachEvents();
 
             _viewService.ResetPlot(_viewModel.FigurePlot);
         }
 
 
-        private void InitializeBindings()
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            _viewModel.PropertyChanged += (s, e) =>
+            switch (e.PropertyName)
             {
-                switch (e.PropertyName)
-                {
-                    case nameof(PlotViewModel.FigurePlot):
-                        this.SafeInvoke(() => _viewService.ResetPlot(_viewModel.FigurePlot));
-                        break;
-                    case nameof(PlotViewModel.IsLoading):
-                        this.SafeInvoke(() =>
-                        {
-                            if (_viewModel.IsLoading)
-                                _viewService.ShowLoading();
-                            else
-                                _viewService.HideLoading();
-                        });
-                        break;
-                    case nameof(PlotViewModel.NeedsRefresh):
-                        this.SafeInvoke(_viewService.RefreshPlot);
-                        break;
-                }
-            };
+                case nameof(PlotViewModel.FigurePlot):
+                    this.SafeInvoke(() => _viewService.ResetPlot(_viewModel.FigurePlot));
+                    break;
+                case nameof(PlotViewModel.IsLoading):
+                    this.SafeInvoke(() =>
+                    {
+                        if (_viewModel.IsLoading)
+                            _viewService.ShowLoading();
+                        else
+                            _viewService.HideLoading();
+                    });
+                    break;
+                case nameof(PlotViewModel.NeedsRefresh):
+                    this.SafeInvoke(_viewService.RefreshPlot);
+                    break;
+            }
         }
 
         private void AttachEvents()

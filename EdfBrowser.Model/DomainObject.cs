@@ -1,7 +1,7 @@
 
 namespace EdfBrowser.Model
 {
-    public class DomainObject
+    public abstract class DomainObject
     {
         public int Id { get; set; }
     }

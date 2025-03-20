@@ -55,6 +55,14 @@ namespace EdfBrowser.App
                 string label = new string(EdfInfo._signals[i]._label);
                 DataRecords[label] = new DataRecord(sampleRate, i);
             }
+
+            Clear();
+            for (int i = 0; i < EdfInfo._signalCount; i++)
+            {
+                SignalInfo signal = EdfInfo._signals[i];
+                SignalItem signalItem = new SignalItem(signal);
+                AddSignal(signalItem);
+            }
         }
 
         internal async Task ReadPhysicalSamples(RecordRange range)

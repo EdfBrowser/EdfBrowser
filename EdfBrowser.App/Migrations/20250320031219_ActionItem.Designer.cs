@@ -3,14 +3,16 @@ using System;
 using EdfBrowser.App;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EdfBrowser.App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250320031219_ActionItem")]
+    partial class ActionItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,14 +33,6 @@ namespace EdfBrowser.App.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ActionItems");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = -1,
-                            Description = "Open local edf files",
-                            Title = "Open File"
-                        });
                 });
 
             modelBuilder.Entity("EdfBrowser.Model.FileItem", b =>
