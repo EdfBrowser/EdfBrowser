@@ -1,4 +1,5 @@
 using EdfBrowser.Model;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -8,7 +9,7 @@ using System.Windows.Input;
 
 namespace EdfBrowser.App
 {
-    internal partial class FileView : UserControl
+    internal class FileView : BaseView
     {
         private class RecentFilesPanel : Panel
         {
@@ -28,6 +29,9 @@ namespace EdfBrowser.App
 
             protected override void OnPaint(PaintEventArgs e)
             {
+                if (_owner._recentFiles == null)
+                    return;
+
                 base.OnPaint(e);
                 int yPos = Padding.Top;
 
@@ -109,6 +113,9 @@ namespace EdfBrowser.App
 
             protected override void OnPaint(PaintEventArgs e)
             {
+                if (_owner._recentFiles == null)
+                    return;
+
                 base.OnPaint(e);
                 int yPos = Padding.Top;
 
@@ -153,7 +160,6 @@ namespace EdfBrowser.App
             }
         }
 
-        private readonly FileViewModel _fileViewModel;
         private readonly RecentFilesPanel _recentFilesPanel;
         private readonly GetStartedPanel _getStartedPanel;
         private IList<FileItem> _recentFiles;
@@ -161,18 +167,8 @@ namespace EdfBrowser.App
         private ICommand _openFileCommand;
         private ICommand _executeActionCommand;
 
-        public FileView(FileViewModel fileViewModel)
+        public FileView()
         {
-            InitializeComponent();
-
-            _fileViewModel = fileViewModel;
-            _fileViewModel.PropertyChanged += OnPropertyChanged;
-
-            _recentFiles = _fileViewModel.RecentFiles.ToList();
-            _actionItems = _fileViewModel.ActionItems.ToList();
-            _openFileCommand = _fileViewModel.OpenFileCommand;
-            _executeActionCommand = _fileViewModel.ExecuteActionCommand;
-
             _recentFilesPanel = new RecentFilesPanel(this)
             {
                 Dock = DockStyle.Fill,
@@ -190,25 +186,39 @@ namespace EdfBrowser.App
             Controls.Add(_getStartedPanel);
         }
 
-        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            if (e.PropertyName == nameof(_fileViewModel.RecentFiles))
+            base.OnLoad(e);
+
+            if (!(DataContext is FileViewModel vm)) return;
+
+            _recentFiles = vm.RecentFiles.ToList();
+            _actionItems = vm.ActionItems.ToList();
+            _openFileCommand = vm.OpenFileCommand;
+            _executeActionCommand = vm.ExecuteActionCommand;
+        }
+
+        protected override void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (!(DataContext is FileViewModel vm)) return;
+
+            if (e.PropertyName == nameof(vm.RecentFiles))
             {
-                _recentFiles = _fileViewModel.RecentFiles.ToList();
+                _recentFiles = vm.RecentFiles.ToList();
                 _recentFilesPanel.Invalidate();
             }
-            else if (e.PropertyName == nameof(_fileViewModel.ActionItems))
+            else if (e.PropertyName == nameof(vm.ActionItems))
             {
-                _actionItems = _fileViewModel.ActionItems.ToList();
+                _actionItems = vm.ActionItems.ToList();
                 _getStartedPanel.Invalidate();
             }
-            else if (e.PropertyName == nameof(_fileViewModel.OpenFileCommand))
+            else if (e.PropertyName == nameof(vm.OpenFileCommand))
             {
-                _openFileCommand = _fileViewModel.OpenFileCommand;
+                _openFileCommand = vm.OpenFileCommand;
             }
-            else if (e.PropertyName == nameof(_fileViewModel.ExecuteActionCommand))
+            else if (e.PropertyName == nameof(vm.ExecuteActionCommand))
             {
-                _executeActionCommand = _fileViewModel.ExecuteActionCommand;
+                _executeActionCommand = vm.ExecuteActionCommand;
             }
         }
     }

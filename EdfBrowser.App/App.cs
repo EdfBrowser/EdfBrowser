@@ -14,7 +14,6 @@ namespace EdfBrowser.App
         {
             _host = CreateHostBuilder().Build();
 
-            _host.Start();
 
             IServiceProvider provider = _host.Services;
 
@@ -30,9 +29,11 @@ namespace EdfBrowser.App
                 = provider.GetRequiredService<NavigationService<FileViewModel>>();
 
             navigationService.Navigate();
-
-            MainForm = provider.GetRequiredService<MainView>();
+            
+            MainForm = provider.GetRequiredService<MainWindow>();
             MainForm.Show();
+
+            _host.Start();
         }
 
         protected override void ExitThreadCore()
@@ -41,13 +42,12 @@ namespace EdfBrowser.App
 
             _host.StopAsync();
 
-            _host.Dispose();
+            _host.Dispose(); // 释放所有获取的service
         }
 
         private static IHostBuilder CreateHostBuilder()
         {
             return Host.CreateDefaultBuilder()
-                .AddConfiguration()
                 .AddDbContext()
                 .AddStores()
                 .AddServices()

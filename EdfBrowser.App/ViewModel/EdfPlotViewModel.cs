@@ -1,11 +1,17 @@
+using System.Windows.Input;
+
 namespace EdfBrowser.App
 {
     internal class EdfPlotViewModel : BaseViewModel
     {
         private readonly EdfStore _edfStore;
+        private readonly NavigationService<SignalListViewModel> _navigationService;
 
-        public EdfPlotViewModel(EdfStore edfStore, PlotViewModel plotViewModel,
-            TimelineViewModel timelineViewModel)
+        public EdfPlotViewModel(
+            EdfStore edfStore,
+            PlotViewModel plotViewModel,
+            TimelineViewModel timelineViewModel,
+            NavigationService<SignalListViewModel> navigationService)
         {
             _edfStore = edfStore;
 
@@ -13,14 +19,17 @@ namespace EdfBrowser.App
             TimelineViewModel = timelineViewModel;
             TimelineViewModel.TimelineValueChanged += OnTimelineValueChanged;
 
-            double totalDuration = _edfStore.EdfInfo._recordDuration * _edfStore.EdfInfo._recordCount;
+            _navigationService = navigationService;
+
+            double totalDuration = _edfStore.TotalDuration;
             TimelineViewModel.MaxValue = totalDuration;
 
-            PlotViewModel.ResetCommnad.Execute(null);
+            BackwardCommand = new RelayCommand(Backward);
         }
 
         internal PlotViewModel PlotViewModel { get; }
         internal TimelineViewModel TimelineViewModel { get; }
+        internal ICommand BackwardCommand { get; }
 
         protected override void Dispose(bool disposing)
         {
@@ -38,6 +47,11 @@ namespace EdfBrowser.App
             PlotViewModel.ReadSamplesCommnad.Execute(_range);
 
             _oldVal = e;
+        }
+
+        private void Backward(object parameter)
+        {
+            _navigationService.Navigate();
         }
     }
 }

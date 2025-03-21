@@ -21,6 +21,8 @@ namespace EdfBrowser.App
 
             ReadSamplesCommnad = new AsyncRelayCommand(ReadPhysicalSamples);
             ResetCommnad = new RelayCommand(ResetPlot);
+
+            ResetCommnad.Execute(null);
         }
 
         internal ICommand ReadSamplesCommnad { get; }

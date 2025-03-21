@@ -9,14 +9,19 @@ namespace EdfBrowser.App
         {
             return host.ConfigureServices(services =>
             {
-                services.AddSingleton<MainView>();
+                services.AddSingleton<ViewFactory>();
+
+                services.AddSingleton(s =>
+                    new MainWindow(s.GetRequiredService<ViewFactory>())
+                    { DataContext = s.GetRequiredService<MainViewModel>() });
 
                 services.AddTransient<FileView>();
-                services.AddTransient<EdfPlotView>();
                 services.AddTransient<SignalListView>();
 
-                services.AddSingleton<PlotView>();
-                services.AddSingleton<TimelineView>();
+                services.AddTransient<EdfPlotView>();
+
+                services.AddTransient<PlotView>();
+                services.AddTransient<TimelineView>();
             });
         }
     }

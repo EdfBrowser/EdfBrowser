@@ -48,8 +48,16 @@ namespace EdfBrowser.EdfParser
             },
             new MethodDefinition 
             {
-                Name = "EdfReadHeader",
-                EntryPoint = "edf_read_header",
+                Name = "EdfReadHeaderInfo",
+                EntryPoint = "edf_read_header_info",
+                ReturnType = "int",
+                Parameters = new[] { "IntPtr handle", "IntPtr ptr" },
+                CallingConvention = "CallingConvention.Cdecl"
+            },
+            new MethodDefinition 
+            {
+                Name = "EdfReadSignalInfo",
+                EntryPoint = "edf_read_signal_info",
                 ReturnType = "int",
                 Parameters = new[] { "IntPtr handle", "IntPtr ptr" },
                 CallingConvention = "CallingConvention.Cdecl"

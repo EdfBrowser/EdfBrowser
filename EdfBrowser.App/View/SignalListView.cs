@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
 {
-    internal partial class SignalListView : UserControl
+    internal class SignalListView : BaseView
     {
         private class BindableListView : ListView
         {
@@ -173,8 +174,6 @@ namespace EdfBrowser.App
             }
         }
 
-        private readonly SignalListViewModel _signalListViewModel;
-
         private readonly TableLayoutPanel _mainLayout;
         private readonly FlowLayoutPanel _operatorLayout;
 
@@ -189,12 +188,8 @@ namespace EdfBrowser.App
         private readonly Button _completeButton;
         private readonly Button _backwardButton;
 
-        public SignalListView(SignalListViewModel signalListViewModel)
+        public SignalListView()
         {
-            InitializeComponent();
-
-            _signalListViewModel = signalListViewModel;
-
             _mainLayout = new TableLayoutPanel
             {
                 RowCount = 2,
@@ -229,7 +224,6 @@ namespace EdfBrowser.App
             _allListView.Columns.Add("Index", 50, HorizontalAlignment.Left);
             _allListView.Columns.Add("Label", 200, HorizontalAlignment.Left);
             _allListView.Columns.Add("SampleRate", 200, HorizontalAlignment.Left);
-            _allListView.DataSource = _signalListViewModel.SignalItems;
 
             _selectedListView = new BindableListView
             {
@@ -242,7 +236,6 @@ namespace EdfBrowser.App
             _selectedListView.Columns.Add("Index", 50, HorizontalAlignment.Left);
             _selectedListView.Columns.Add("Label", 200, HorizontalAlignment.Left);
             _selectedListView.Columns.Add("SampleRate", 200, HorizontalAlignment.Left);
-            _selectedListView.DataSource = _signalListViewModel.SelectedSignalItems;
 
             _addButton = new Button
             {
@@ -295,6 +288,26 @@ namespace EdfBrowser.App
             Controls.Add(_mainLayout);
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (!(DataContext is SignalListViewModel vm)) return;
+
+            _selectedListView.DataSource = vm.SelectedSignalItems;
+            _allListView.DataSource = vm.SignalItems;
+        }
+
+        protected override void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (!(DataContext is SignalListViewModel vm)) return;
+           
+            if (e.PropertyName == nameof(vm.SelectedSignalItems))
+                _selectedListView.DataSource = vm.SelectedSignalItems;
+            else if (e.PropertyName == nameof(vm.SignalItems))
+                _allListView.DataSource = vm.SignalItems;
+        }
+
 
         private void OnAddSignal(object sender, EventArgs e)
         {
@@ -308,7 +321,7 @@ namespace EdfBrowser.App
             if (selectedItems.Any())
             {
                 // 一次性将所有选中的项添加到视图模型
-                _signalListViewModel.AddSignalCommand.Execute(selectedItems);
+                ((SignalListViewModel)DataContext)?.AddSignalCommand.Execute(selectedItems);
             }
         }
 
@@ -324,19 +337,19 @@ namespace EdfBrowser.App
             if (selectedItems.Any())
             {
                 // 一次性将所有选中的项添加到视图模型
-                _signalListViewModel.RemoveSignalCommand.Execute(selectedItems);
+                ((SignalListViewModel)DataContext)?.RemoveSignalCommand.Execute(selectedItems);
             }
         }
 
 
         private void OnCompleted(object sender, EventArgs e)
         {
-            _signalListViewModel.CompletedCommand.Execute(null);
+            ((SignalListViewModel)DataContext)?.CompletedCommand.Execute(null);
         }
 
         private void OnBackward(object sender, EventArgs e)
         {
-            _signalListViewModel.BackwardCommand.Execute(null);
+            ((SignalListViewModel)DataContext)?.BackwardCommand.Execute(null);
         }
     }
 }

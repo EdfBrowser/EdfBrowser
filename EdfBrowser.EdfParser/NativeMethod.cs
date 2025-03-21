@@ -5,7 +5,7 @@ namespace EdfBrowser.EdfParser
 {
     internal static class NativeMethod
     {
-
+    
         [DllImport("../edflib", EntryPoint = "edf_open", CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr EdfOpen(
             string filepath);
@@ -14,8 +14,13 @@ namespace EdfBrowser.EdfParser
         internal static extern int EdfClose(
             IntPtr handle);
 
-        [DllImport("../edflib", EntryPoint = "edf_read_header", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int EdfReadHeader(
+        [DllImport("../edflib", EntryPoint = "edf_read_header_info", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int EdfReadHeaderInfo(
+            IntPtr handle,
+        IntPtr ptr);
+
+        [DllImport("../edflib", EntryPoint = "edf_read_signal_info", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int EdfReadSignalInfo(
             IntPtr handle,
         IntPtr ptr);
 

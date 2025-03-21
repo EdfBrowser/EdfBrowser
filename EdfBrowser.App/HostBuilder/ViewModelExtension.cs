@@ -17,12 +17,13 @@ namespace EdfBrowser.App
                 services.AddSingleton(s => CreateFileViewNavigationService(s));
                 services.AddSingleton(s => CreateSignalListNavigationService(s));
 
-                services.AddTransient<EdfPlotViewModel>();
                 services.AddTransient<SignalListViewModel>();
                 services.AddTransient<FileViewModel>();
 
-                services.AddSingleton<PlotViewModel>();
-                services.AddSingleton<TimelineViewModel>();
+                services.AddTransient<EdfPlotViewModel>();
+
+                services.AddTransient<PlotViewModel>();
+                services.AddTransient<TimelineViewModel>();
             });
         }
 

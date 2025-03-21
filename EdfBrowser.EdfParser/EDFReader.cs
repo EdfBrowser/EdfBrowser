@@ -32,32 +32,43 @@ namespace EdfBrowser.EdfParser
                 throw new EDFException("Failed to open EDF file");
         }
 
-        public EdfInfo ReadHeader()
+        public HeaderInfo ReadHeader()
         {
-            IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<EdfInfo>());
-
+            IntPtr headerPtr = IntPtr.Zero;
+            IntPtr signalPtr = IntPtr.Zero;
             try
             {
-                int result = NativeMethod.EdfReadHeader(_handle, ptr);
+                headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf<HeaderInfo>());
+                int result = NativeMethod.EdfReadHeaderInfo(_handle, headerPtr);
                 if (result != 0)
                     throw new EDFException($"Header read error: {result}");
 
-                var info = Marshal.PtrToStructure<EdfInfo>(ptr);
+                HeaderInfo headerInfo = Marshal.PtrToStructure<HeaderInfo>(headerPtr);
 
-                // convert
-                info.StartDateTime = info.ToDT(new string(info._startDate), new string(info._startTime));
+                signalPtr = Marshal.AllocHGlobal(Marshal.SizeOf<SignalInfo>() * (int)headerInfo._signalCount);
+                result = NativeMethod.EdfReadSignalInfo(_handle, signalPtr);
+                if (result != 0)
+                    throw new EDFException($"Header read error: {result}");
 
-                _signalTransforms = new SignalTransform[info._signalCount];
-                for (int i = 0; i < info._signalCount; i++)
-                    _signalTransforms[i] = new SignalTransform(info._signals[i]);
+                headerInfo._signals = new SignalInfo[(int)headerInfo._signalCount];
+                for (int i = 0; i < headerInfo._signalCount; i++)
+                {
+                    headerInfo._signals[i] = Marshal.PtrToStructure<SignalInfo>(signalPtr + i * Marshal.SizeOf<SignalInfo>());
+                }
 
+                _signalTransforms = new SignalTransform[headerInfo._signalCount];
+                for (int i = 0; i < headerInfo._signalCount; i++)
+                    _signalTransforms[i] = new SignalTransform(headerInfo._signals[i]);
 
-                return info;
+                return headerInfo;
             }
             finally
             {
-                if (ptr != IntPtr.Zero)
-                    Marshal.FreeHGlobal(ptr);
+                if (headerPtr != IntPtr.Zero)
+                    Marshal.FreeHGlobal(headerPtr);
+
+                if (signalPtr != IntPtr.Zero)
+                    Marshal.FreeHGlobal(signalPtr);
             }
         }
 

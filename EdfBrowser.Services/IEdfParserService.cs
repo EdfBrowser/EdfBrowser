@@ -1,14 +1,15 @@
 using EdfBrowser.EdfParser;
 using EdfBrowser.Model;
+using System;
 using System.Threading.Tasks;
 
 namespace EdfBrowser.Services
 {
-    public interface IEdfParserService
+    public interface IEdfParserService : IDisposable
     {
-        void SetFilePath(string edfFilePath);
+        void CreateInternalHandle(string edfFilePath);
 
-        Task<EdfInfo> ReadEdfInfo();
+        Task<HeaderInfo> ReadEdfInfo();
         Task ReadPhysicalSamples(DataRecord dataRecord);
     }
 }

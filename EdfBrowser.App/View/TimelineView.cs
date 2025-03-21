@@ -1,21 +1,16 @@
 using EdfBrowser.CustomControl;
+using System;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
 {
-    internal partial class TimelineView : UserControl
+    internal class TimelineView : BaseView
     {
-        private readonly TimelineViewModel _timelineViewModel;
         private readonly ModernTimelineControl _timelineControl;
 
         // TODO: dispose event
-        public TimelineView(TimelineViewModel timelineViewModel)
+        public TimelineView()
         {
-            InitializeComponent();
-
-            _timelineViewModel = timelineViewModel;
-            _timelineViewModel.PropertyChanged += OnPropertyChanged;
-
             _timelineControl = new ModernTimelineControl
             {
                 Dock = DockStyle.Fill
@@ -23,20 +18,33 @@ namespace EdfBrowser.App
             _timelineControl.ValueChanged += ValueChanged;
 
             Controls.Add(_timelineControl);
-
-            Initial(0, _timelineViewModel.MaxValue);
         }
 
-        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            if (e.PropertyName == nameof(_timelineViewModel.MaxValue))
+            base.OnLoad(e);
+            if (!(DataContext is TimelineViewModel vm)) return;
+
+            Initial(0, vm.MaxValue);
+        }
+
+
+        protected override void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (!(DataContext is TimelineViewModel vm)) return;
+
+            if (e.PropertyName == nameof(vm.MaxValue))
             {
-                Initial(0, _timelineViewModel.MaxValue);
+                Initial(0, vm.MaxValue);
             }
         }
 
         private void ValueChanged(object sender, System.EventArgs e)
-            => _timelineViewModel.CurrentValue = (uint)_timelineControl.CurrentValue;
+        {
+            if (!(DataContext is TimelineViewModel vm)) return;
+
+            vm.CurrentValue = (uint)_timelineControl.CurrentValue;
+        }
 
         private void Initial(double minValue, double maxValue)
         {

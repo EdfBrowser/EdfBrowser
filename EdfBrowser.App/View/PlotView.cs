@@ -1,49 +1,46 @@
 using Plot.WinForm;
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
 {
-    internal partial class PlotView : UserControl
+    // TODO: disposed old figureForm if the instance type is signleton
+    internal class PlotView : BaseView
     {
-        private readonly PlotViewModel _viewModel;
         private readonly PlotViewService _viewService;
-
         private readonly FigureForm _figureForm;
-        private readonly Dictionary<string, Action> _actions;
 
-        private readonly Timer _animationTimer;
-        private readonly float _rotationAngle;
-        private readonly Panel _loadingPanel;
-
-        public PlotView(PlotViewModel plotViewModel)
+        public PlotView()
         {
-            InitializeComponent();
-
-            _viewModel = plotViewModel;
-            // TODO: disposed old figureForm
             _figureForm = new FigureForm() { Dock = DockStyle.Fill };
             _viewService = new PlotViewService(this, _figureForm);
 
-            _viewModel.PropertyChanged += OnPropertyChanged;
             AttachEvents();
+        }
 
-            _viewService.ResetPlot(_viewModel.FigurePlot);
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (!(DataContext is PlotViewModel vm)) return;
+
+            _viewService.ResetPlot(vm.FigurePlot);
         }
 
 
-        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            if (!(DataContext is PlotViewModel vm)) return;
+
             switch (e.PropertyName)
             {
                 case nameof(PlotViewModel.FigurePlot):
-                    this.SafeInvoke(() => _viewService.ResetPlot(_viewModel.FigurePlot));
+                    this.SafeInvoke(() => _viewService.ResetPlot(vm.FigurePlot));
                     break;
                 case nameof(PlotViewModel.IsLoading):
                     this.SafeInvoke(() =>
                     {
-                        if (_viewModel.IsLoading)
+                        if (vm.IsLoading)
                             _viewService.ShowLoading();
                         else
                             _viewService.HideLoading();

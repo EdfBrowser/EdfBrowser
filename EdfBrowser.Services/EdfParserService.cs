@@ -8,16 +8,14 @@ namespace EdfBrowser.Services
     {
         private EDFReader _reader;
 
-        public void SetFilePath(string edfFilePath)
+        public void CreateInternalHandle(string edfFilePath)
         {
-            _reader?.Dispose();
-
             _reader = new EDFReader(edfFilePath);
         }
 
-        public async Task<EdfInfo> ReadEdfInfo()
+        public async Task<HeaderInfo> ReadEdfInfo()
         {
-            EdfInfo info = _reader.ReadHeader();
+            HeaderInfo info = _reader.ReadHeader();
 
             return await Task.FromResult(info);
         }
@@ -29,6 +27,11 @@ namespace EdfBrowser.Services
             {
                 _reader.ReadPhysicalData(dataRecord);
             });
+        }
+
+        public void Dispose()
+        {
+            _reader?.Dispose();
         }
     }
 }

@@ -21,45 +21,47 @@ namespace EdfBrowser.App
             SelectedSignalItems = new ObservableCollection<SignalItem>();
         }
 
-
-        internal event EventHandler EdfFilePathChanged;
-        internal EdfInfo EdfInfo { get; private set; }
         internal Dictionary<string, DataRecord> DataRecords { get; private set; }
 
         internal ObservableCollection<SignalItem> SignalItems { get; private set; }
         internal ObservableCollection<SignalItem> SelectedSignalItems { get; private set; }
+        internal double TotalDuration { get; private set; }
 
-        internal void SetFilePath(string edfFilePath)
+        internal async void SetFilePath(string edfFilePath)
         {
             if (string.IsNullOrEmpty(edfFilePath))
                 throw new ArgumentNullException(nameof(edfFilePath));
 
-            if (_filePath == edfFilePath)
-                return;
+            if (_filePath == edfFilePath) return;
 
+            _edfParserService?.Dispose();
             _filePath = edfFilePath;
-            _edfParserService.SetFilePath(edfFilePath);
+            _edfParserService.CreateInternalHandle(edfFilePath);
 
-            EdfFilePathChanged?.Invoke(this, null);
+            await ReadInfo();
         }
 
-        internal async Task ReadInfo()
+        // TODO: optimized the memory
+        private async Task ReadInfo()
         {
-            EdfInfo = await _edfParserService.ReadEdfInfo();
+
+            HeaderInfo headerInfo = await _edfParserService.ReadEdfInfo();
+
+            TotalDuration = headerInfo._recordDuration * headerInfo._recordCount;
 
             // 初始化
             DataRecords = new Dictionary<string, DataRecord>();
-            for (uint i = 0; i < EdfInfo._signalCount; i++)
+            for (uint i = 0; i < headerInfo._signalCount; i++)
             {
-                uint sampleRate = EdfInfo._signals[i]._samples;
-                string label = new string(EdfInfo._signals[i]._label);
+                uint sampleRate = headerInfo._signals[i]._samples;
+                string label = new string(headerInfo._signals[i]._label);
                 DataRecords[label] = new DataRecord(sampleRate, i);
             }
 
             Clear();
-            for (int i = 0; i < EdfInfo._signalCount; i++)
+            for (int i = 0; i < headerInfo._signalCount; i++)
             {
-                SignalInfo signal = EdfInfo._signals[i];
+                SignalInfo signal = headerInfo._signals[i];
                 SignalItem signalItem = new SignalItem(signal);
                 AddSignal(signalItem);
             }
