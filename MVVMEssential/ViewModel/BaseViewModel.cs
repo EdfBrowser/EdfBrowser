@@ -6,7 +6,7 @@ namespace MVVMEssential
 {
     public abstract class BaseViewModel : INotifyPropertyChanged, IDisposable
     {
-        private bool disposedValue;
+        protected bool _disposedValue;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -17,22 +17,14 @@ namespace MVVMEssential
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                disposedValue = true;
+                _disposedValue = true;
             }
-        }
-
-        ~BaseViewModel()
-        {
-            Dispose(disposing: false);
         }
 
         public void Dispose()

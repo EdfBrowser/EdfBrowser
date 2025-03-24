@@ -29,12 +29,7 @@
       <ProjectReference Include="..\EdfBrowser.Model\EdfBrowser.Model.csproj" />
       <ProjectReference Include="..\EdfBrowser.Services\EdfBrowser.Services.csproj" />
       <ProjectReference Include="..\external\Plot\Plot.WinForm\Plot.WinForm.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="View\BaseForm.cs">
-        <SubType>UserControl</SubType>
-      </Compile>
+      <ProjectReference Include="..\MVVMEssential\MVVMEssential.csproj" />
     </ItemGroup>
 
 </Project>

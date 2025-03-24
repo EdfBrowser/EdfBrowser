@@ -1,4 +1,5 @@
 using EdfBrowser.Model;
+using MVVMEssential;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

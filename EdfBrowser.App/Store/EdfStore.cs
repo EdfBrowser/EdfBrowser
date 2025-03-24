@@ -44,26 +44,19 @@ namespace EdfBrowser.App
         // TODO: optimized the memory
         private async Task ReadInfo()
         {
-
             HeaderInfo headerInfo = await _edfParserService.ReadEdfInfo();
 
             TotalDuration = headerInfo._recordDuration * headerInfo._recordCount;
 
             // 初始化
             DataRecords = new Dictionary<string, DataRecord>();
-            for (uint i = 0; i < headerInfo._signalCount; i++)
-            {
-                uint sampleRate = headerInfo._signals[i]._samples;
-                string label = new string(headerInfo._signals[i]._label);
-                DataRecords[label] = new DataRecord(sampleRate, i);
-            }
-
             Clear();
-            for (int i = 0; i < headerInfo._signalCount; i++)
+            for (uint i = 0; i < headerInfo._signalCount; i++)
             {
                 SignalInfo signal = headerInfo._signals[i];
                 SignalItem signalItem = new SignalItem(signal);
                 AddSignal(signalItem);
+                DataRecords[signalItem.Label] = new DataRecord(signalItem.SampleRate, i);
             }
         }
 

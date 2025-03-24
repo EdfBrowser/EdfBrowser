@@ -1,4 +1,5 @@
 using EdfBrowser.EdfParser;
+using MVVMEssential;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

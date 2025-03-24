@@ -1,4 +1,6 @@
 
+using MVVMEssential;
+
 namespace EdfBrowser.App
 {
     internal class MainViewModel : BaseViewModel

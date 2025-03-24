@@ -1,4 +1,5 @@
 using EdfBrowser.Model;
+using MVVMEssential;
 using Plot.Skia;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -101,6 +102,11 @@ namespace EdfBrowser.App
             foreach (SignalItem item in _edfStore.SelectedSignalItems)
             {
                 IYAxis y = axisManager.AddNumericLeftAxis();
+                y.Label.Text = item.Label;
+                y.TickLabelStyle.Renderable = false;
+                y.MajorTickStyle.Renderable = false;
+                y.MinorTickStyle.Renderable = false;
+
 
                 double samples = 1.0 / item.SampleRate;
                 seriesManager.AddSignalSeries(x, y, samples);
@@ -131,7 +137,9 @@ namespace EdfBrowser.App
                     source.PrependRange(dataRecord.Buffer);
                 }
 
-                axisManager.SetLimits(sig.GetXLimit().ToRange, sig.X);
+                axisManager.SetLimits(source.GetXLimit().ToRange, sig.X);
+
+                dataRecord.Clear();
             }
 
             NeedsRefresh = true;

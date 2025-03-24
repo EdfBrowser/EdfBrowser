@@ -1,3 +1,4 @@
+using MVVMEssential;
 using System;
 using System.Windows.Forms;
 
@@ -48,8 +49,10 @@ namespace EdfBrowser.App
                 SwitchControl(vm.CurrentViewModel);
         }
 
-        protected override void Free(bool disposing)
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
+
             if (disposing)
             {
                 _viewFactory.Dispose();

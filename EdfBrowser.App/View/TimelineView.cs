@@ -1,4 +1,5 @@
 using EdfBrowser.CustomControl;
+using MVVMEssential;
 using System;
 using System.Windows.Forms;
 
@@ -8,7 +9,6 @@ namespace EdfBrowser.App
     {
         private readonly ModernTimelineControl _timelineControl;
 
-        // TODO: dispose event
         public TimelineView()
         {
             _timelineControl = new ModernTimelineControl
@@ -18,6 +18,12 @@ namespace EdfBrowser.App
             _timelineControl.ValueChanged += ValueChanged;
 
             Controls.Add(_timelineControl);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _timelineControl.ValueChanged -= ValueChanged;
+            base.Dispose(disposing);
         }
 
         protected override void OnLoad(EventArgs e)

@@ -1,26 +1,21 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace EdfBrowser.App
+namespace MVVMEssential
 {
-    internal abstract class BaseView : UserControl
+    public abstract class BaseForm : Form
     {
         private readonly IContainer components;
 
         private BaseViewModel _dataContext;
 
-        protected BaseView()
+        protected BaseForm()
         {
             components = new Container();
             AutoScaleMode = AutoScaleMode.Font;
         }
 
-        ~BaseView()
-        {
-            Dispose(false);
-        }
-
-        internal BaseViewModel DataContext
+        public BaseViewModel DataContext
         {
             get { return _dataContext; }
             set
@@ -38,7 +33,7 @@ namespace EdfBrowser.App
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
+            base.Dispose(disposing);  // disposed control
 
             if (disposing)
             {
@@ -46,14 +41,9 @@ namespace EdfBrowser.App
 
                 if (_dataContext != null)
                     _dataContext.PropertyChanged -= OnPropertyChanged;
-                _dataContext.Dispose();
             }
-
-            Free(disposing);
         }
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e) { }
-
-        protected virtual void Free(bool disposing) { }
     }
 }

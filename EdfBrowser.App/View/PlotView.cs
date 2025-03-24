@@ -1,10 +1,10 @@
+using MVVMEssential;
 using Plot.WinForm;
 using System;
 using System.Windows.Forms;
 
 namespace EdfBrowser.App
 {
-    // TODO: disposed old figureForm if the instance type is signleton
     internal class PlotView : BaseView
     {
         private readonly PlotViewService _viewService;

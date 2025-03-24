@@ -1,3 +1,4 @@
+using MVVMEssential;
 using System.Windows.Input;
 
 namespace EdfBrowser.App
