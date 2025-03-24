@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project> 
+<Project>
     <PropertyGroup>
-        <TargetFramework>net8.0-windows</TargetFramework>
         <langVersion>7.3</langVersion>
-        <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
-        <PlatformTarget>x86</PlatformTarget>
-        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-	</PropertyGroup>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageOutputPath>D:\.localnugetpackages</PackageOutputPath>
+        <Authors>pusong</Authors>
+    </PropertyGroup>
  </Project>

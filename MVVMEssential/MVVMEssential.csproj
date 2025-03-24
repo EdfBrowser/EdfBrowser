@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net4.8</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
+        <Platforms>x64;x86</Platforms>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Update="View\BaseForm.cs">
+        <SubType>Form</SubType>
+      </Compile>
+      <Compile Update="View\BaseView.cs">
+        <SubType>UserControl</SubType>
+      </Compile>
+    </ItemGroup>
+
+</Project>
