@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace EdfBrowser.EdfParser
 {
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1, Size = 200)]
     public struct HeaderInfo
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 81)]
@@ -27,8 +27,6 @@ namespace EdfBrowser.EdfParser
 
         [MarshalAs(UnmanagedType.U4)]
         public uint _signalCount;
-
-        public SignalInfo[] _signals;
     }
 }
 

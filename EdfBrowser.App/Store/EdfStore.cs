@@ -27,7 +27,7 @@ namespace EdfBrowser.App
         internal ObservableCollection<SignalItem> SelectedSignalItems { get; private set; }
         internal double TotalDuration { get; private set; }
 
-        internal async void SetFilePath(string edfFilePath)
+        internal void SetFilePath(string edfFilePath)
         {
             if (string.IsNullOrEmpty(edfFilePath))
                 throw new ArgumentNullException(nameof(edfFilePath));
@@ -38,23 +38,24 @@ namespace EdfBrowser.App
             _filePath = edfFilePath;
             _edfParserService.CreateInternalHandle(edfFilePath);
 
-            await ReadInfo();
+            ReadInfo();
         }
 
         // TODO: optimized the memory
-        private async Task ReadInfo()
+        private void ReadInfo()
         {
-            HeaderInfo headerInfo = await _edfParserService.ReadEdfInfo();
+            HeaderInfo headerInfo = _edfParserService.ReadHeaderInfo();
 
             TotalDuration = headerInfo._recordDuration * headerInfo._recordCount;
+
+            SignalInfo[] signalInfo = _edfParserService.ReadSignalInfo(headerInfo._signalCount);
 
             // 初始化
             DataRecords = new Dictionary<string, DataRecord>();
             Clear();
             for (uint i = 0; i < headerInfo._signalCount; i++)
             {
-                SignalInfo signal = headerInfo._signals[i];
-                SignalItem signalItem = new SignalItem(signal);
+                SignalItem signalItem = new SignalItem(signalInfo[i]);
                 AddSignal(signalItem);
                 DataRecords[signalItem.Label] = new DataRecord(signalItem.SampleRate, i);
             }

@@ -9,7 +9,8 @@ namespace EdfBrowser.Services
     {
         void CreateInternalHandle(string edfFilePath);
 
-        Task<HeaderInfo> ReadEdfInfo();
+        HeaderInfo ReadHeaderInfo();
+        SignalInfo[] ReadSignalInfo(uint signalCount);
         Task ReadPhysicalSamples(DataRecord dataRecord);
     }
 }

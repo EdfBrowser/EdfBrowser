@@ -1,6 +1,7 @@
 using EdfBrowser.Model;
 using MVVMEssential;
 using Plot.Skia;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -79,9 +80,9 @@ namespace EdfBrowser.App
             RecordRange range = parameter as RecordRange;
             await _edfStore.ReadPhysicalSamples(range);
 
-            UpdatePlot(range.Forward);
-
             IsLoading = false;
+         
+            UpdatePlot(range.Forward);
         }
 
         private void ResetPlot(object parameter)
@@ -136,8 +137,6 @@ namespace EdfBrowser.App
                 {
                     source.PrependRange(dataRecord.Buffer);
                 }
-
-                axisManager.SetLimits(source.GetXLimit().ToRange, sig.X);
 
                 dataRecord.Clear();
             }
