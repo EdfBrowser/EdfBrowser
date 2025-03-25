@@ -13,11 +13,14 @@ namespace EdfBrowser.Services
             _reader = new EDFReader(edfFilePath);
         }
 
-        public async Task<HeaderInfo> ReadEdfInfo()
+        public HeaderInfo ReadHeaderInfo()
         {
-            HeaderInfo info = _reader.ReadHeader();
+            return _reader.ReadHeader();
+        }
 
-            return await Task.FromResult(info);
+        public SignalInfo[] ReadSignalInfo(uint signalCount)
+        {
+            return _reader.ReadSignalInfo(signalCount);
         }
 
         public async Task ReadPhysicalSamples(DataRecord dataRecord)
